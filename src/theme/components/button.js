@@ -35,6 +35,14 @@ const Button = {
         borderColor: mode('brand.borderLight', 'brand.borderDark')(props),
       },
     }),
+    action: (props) => ({
+      borderColor: 'transparent',
+      borderRadius: '2px',
+      color: mode('brand.iconLight', 'brand.iconDark')(props),
+      _hover: {
+        bg: mode('brand.iconFadedLight', 'brand.iconFadedDark')(props),
+      },
+    }),
   },
 };
 
