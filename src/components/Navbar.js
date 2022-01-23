@@ -16,6 +16,7 @@ import {
   MenuList,
   useColorMode,
   useColorModeValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { AiOutlineUser } from 'react-icons/ai';
@@ -26,6 +27,8 @@ import { IoSearchOutline } from 'react-icons/io5';
 import logo from '../assets/logo/logo.svg';
 import brandTextWhite from '../assets/logo/text_white_theme.svg';
 import brandTextDark from '../assets/logo/text_dark_theme.svg';
+import AuthenticationModal from './AuthenticationModal';
+import { useState } from 'react';
 
 const Logo = () => {
   const brandName = useColorModeValue(brandTextWhite, brandTextDark);
@@ -76,7 +79,7 @@ const SearchBar = () => {
   );
 };
 
-const UserMenu = () => {
+const UserMenu = ({ openAuthenticationModal }) => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -108,7 +111,7 @@ const UserMenu = () => {
           </MenuItem>
         </MenuGroup>
         <MenuDivider />
-        <MenuItem>
+        <MenuItem onClick={() => openAuthenticationModal('login')}>
           <HStack spacing={4}>
             <Icon as={FiLogIn} boxSize='20px' />
             <span>Log In / Sign Up</span>
@@ -119,7 +122,16 @@ const UserMenu = () => {
   );
 };
 
-const Navbar = (props) => {
+const Navbar = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentAuthenticationMode, setCurrentAuthenticationMode] =
+    useState('login');
+
+  const openAuthenticationModal = (mode = 'login') => {
+    setCurrentAuthenticationMode(mode);
+    onOpen();
+  };
+
   return (
     <Flex
       as='nav'
@@ -144,17 +156,34 @@ const Navbar = (props) => {
 
       <HStack spacing='4'>
         <HStack spacing='3' display={{ base: 'none', lg: 'flex' }}>
-          <Button variant='secondary' w='120px' h='32px'>
+          <Button
+            variant='secondary'
+            w='120px'
+            h='32px'
+            onClick={() => openAuthenticationModal('login')}
+          >
             Log In
           </Button>
-          <Button variant='primary' w='120px' h='32px'>
+          <Button
+            variant='primary'
+            w='120px'
+            h='32px'
+            onClick={() => openAuthenticationModal('signUp')}
+          >
             Sign Up
           </Button>
         </HStack>
         <Flex>
-          <UserMenu />
+          <UserMenu openAuthenticationModal={openAuthenticationModal} />
         </Flex>
       </HStack>
+
+      <AuthenticationModal
+        mode={currentAuthenticationMode}
+        setMode={setCurrentAuthenticationMode}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
     </Flex>
   );
 };
