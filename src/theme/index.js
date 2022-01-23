@@ -2,6 +2,7 @@ import { extendTheme } from '@chakra-ui/react';
 import styles from './styles';
 import colors from './colors';
 import Button from './components/button';
+import Link from './components/link';
 
 const config = { initialColorMode: 'light', useSystemColorMode: true };
 
@@ -11,6 +12,7 @@ const overrides = {
   colors,
   components: {
     Button,
+    Link,
   },
 };
 
