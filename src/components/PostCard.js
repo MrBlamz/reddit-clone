@@ -106,7 +106,7 @@ const Header = ({ title, communityName, author, timestamp }) => (
     </Box>
     <HStack fontSize='xs'>
       <Link as={RouterLink} to={`/r/${communityName}`}>
-        <Text>{`r/${communityName}`}</Text>
+        <Text fontWeight='bold'>{`r/${communityName}`}</Text>
       </Link>
       <Text>{`Posted by u/${author}`}</Text>
       <Text>{timestamp}</Text>
