@@ -39,6 +39,8 @@ const GoogleIcon = (props) => (
 );
 
 const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
+  const isLogin = mode === 'login';
+
   return (
     <Modal
       isOpen={isOpen}
@@ -66,9 +68,7 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
           ></Box>
           <Flex direction='column' my='10%'>
             <Box>
-              <Text fontWeight='bold'>
-                {mode === 'login' ? 'Login' : 'Sign up'}
-              </Text>
+              <Text fontWeight='bold'>{isLogin ? 'Login' : 'Sign up'}</Text>
               <Text fontSize='xs'>
                 By continuing, you agree to our{' '}
                 <Link variant='primary'>User Agreement</Link> and{' '}
@@ -85,7 +85,7 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
                 >
                   <Icon as={GoogleIcon} mr='auto' />
                   <Text mr='auto'>
-                    {mode === 'login' ? 'Log in' : 'Sign up'} with Google
+                    {isLogin ? 'Log in' : 'Sign up'} with Google
                   </Text>
                 </Button>
               </Flex>
@@ -103,19 +103,15 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
               <Box mt='10%'>
                 <HStack spacing={1}>
                   <Text fontSize='smaller'>
-                    {mode === 'login'
-                      ? 'New to Reddit?'
-                      : 'Already a redditor?'}
+                    {isLogin ? 'New to Reddit?' : 'Already a redditor?'}
                   </Text>
                   <Link
                     variant='primary'
                     fontSize='smaller'
                     fontWeight='bold'
-                    onClick={() =>
-                      setMode(mode === 'login' ? 'signUp' : 'login')
-                    }
+                    onClick={() => setMode(isLogin ? 'signUp' : 'login')}
                   >
-                    {mode === 'login' ? 'SIGN UP' : 'LOG IN'}
+                    {isLogin ? 'SIGN UP' : 'LOG IN'}
                   </Link>
                 </HStack>
               </Box>
