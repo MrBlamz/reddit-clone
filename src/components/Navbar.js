@@ -22,13 +22,15 @@ import { Link as RouterLink } from 'react-router-dom';
 import { AiOutlineUser } from 'react-icons/ai';
 import { BiChevronDown } from 'react-icons/bi';
 import { BsMoon, BsSun } from 'react-icons/bs';
-import { FiLogIn } from 'react-icons/fi';
+import { FiLogIn, FiLogOut } from 'react-icons/fi';
 import { IoSearchOutline } from 'react-icons/io5';
 import logo from '../assets/logo/logo.svg';
 import brandTextWhite from '../assets/logo/text_white_theme.svg';
 import brandTextDark from '../assets/logo/text_dark_theme.svg';
 import AuthenticationModal from './AuthenticationModal';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import UserContext from '../contexts/UserContext';
+import { signOut } from '../utils/firebase/auth';
 
 const Logo = () => {
   const brandName = useColorModeValue(brandTextWhite, brandTextDark);
@@ -79,7 +81,7 @@ const SearchBar = () => {
   );
 };
 
-const UserMenu = ({ openAuthenticationModal }) => {
+const UserMenu = ({ user, openAuthenticationModal }) => {
   const { colorMode, toggleColorMode } = useColorMode();
 
   return (
@@ -111,18 +113,28 @@ const UserMenu = ({ openAuthenticationModal }) => {
           </MenuItem>
         </MenuGroup>
         <MenuDivider />
-        <MenuItem onClick={() => openAuthenticationModal('login')}>
-          <HStack spacing={4}>
-            <Icon as={FiLogIn} boxSize='20px' />
-            <span>Log In / Sign Up</span>
-          </HStack>
-        </MenuItem>
+        {user ? (
+          <MenuItem onClick={signOut}>
+            <HStack spacing={4}>
+              <Icon as={FiLogOut} boxSize='20px' />
+              <span>Logout</span>
+            </HStack>
+          </MenuItem>
+        ) : (
+          <MenuItem onClick={() => openAuthenticationModal('login')}>
+            <HStack spacing={4}>
+              <Icon as={FiLogIn} boxSize='20px' />
+              <span>Log In / Sign Up</span>
+            </HStack>
+          </MenuItem>
+        )}
       </MenuList>
     </Menu>
   );
 };
 
 const Navbar = () => {
+  const user = useContext(UserContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentAuthenticationMode, setCurrentAuthenticationMode] =
     useState('login');
@@ -155,7 +167,10 @@ const Navbar = () => {
       </Flex>
 
       <HStack spacing='4'>
-        <HStack spacing='3' display={{ base: 'none', lg: 'flex' }}>
+        <HStack
+          spacing='3'
+          display={user ? 'none' : { base: 'none', lg: 'flex' }}
+        >
           <Button
             variant='secondary'
             w='120px'
@@ -174,7 +189,10 @@ const Navbar = () => {
           </Button>
         </HStack>
         <Flex>
-          <UserMenu openAuthenticationModal={openAuthenticationModal} />
+          <UserMenu
+            user={user}
+            openAuthenticationModal={openAuthenticationModal}
+          />
         </Flex>
       </HStack>
 

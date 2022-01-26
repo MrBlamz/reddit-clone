@@ -1,8 +1,8 @@
 import { app } from '../../firebase.config';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 
-const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
+export const auth = getAuth(app);
 
 auth.useDeviceLanguage();
 
@@ -22,3 +22,5 @@ export const signInWithGoogleAccount = () => {
       console.log(errorCode, errorMessage, email, credential);
     });
 };
+
+export const signOut = () => auth.signOut();
