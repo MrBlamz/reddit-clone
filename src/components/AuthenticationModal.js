@@ -81,7 +81,9 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
                   variant='outline'
                   fontWeight='normal'
                   w='full'
-                  onClick={signInWithGoogleAccount}
+                  onClick={() =>
+                    signInWithGoogleAccount().then(() => onClose())
+                  }
                 >
                   <Icon as={GoogleIcon} mr='auto' />
                   <Text mr='auto'>
