@@ -17,6 +17,7 @@ import art from '../assets/modalArt.png';
 import {
   signInWithGoogleAccount,
   signUpWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from '../utils/firebase/auth';
 import AuthenticationForm from './AuthenticationForm';
 
@@ -59,11 +60,17 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
   };
 
   const handleLoginSubmit = (values, actions) => {
-    setTimeout(() => {
-      console.log('Logging in');
-      alert(JSON.stringify(values, null, 2));
-      actions.setSubmitting(false);
-    }, 1000);
+    const { email, password } = values;
+
+    signInWithEmailAndPassword(email, password)
+      .then(() => {
+        onClose();
+      })
+      .catch((error) => {
+        const message = error.message;
+        console.log(message);
+      })
+      .finally(() => actions.setSubmitting(false));
   };
 
   return (

@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   getAuth,
   GoogleAuthProvider,
+  signInWithEmailAndPassword as loginWithEmailAndPassword,
   signInWithPopup,
 } from 'firebase/auth';
 
@@ -20,6 +21,9 @@ export const signInWithGoogleAccount = () => {
     console.log(errorCode, errorMessage, email, credential);
   });
 };
+
+export const signInWithEmailAndPassword = (email, password) =>
+  loginWithEmailAndPassword(auth, email, password);
 
 export const signUpWithEmailAndPassword = (email, password) => {
   return createUserWithEmailAndPassword(auth, email, password);
