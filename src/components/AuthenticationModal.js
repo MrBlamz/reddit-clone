@@ -45,24 +45,14 @@ const GoogleIcon = (props) => (
 const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
   const isLogin = mode === 'login';
 
-  const handleSignUpSubmit = (values, actions) => {
+  const handleFormSubmit = (values, actions) => {
     const { email, password } = values;
 
-    signUpWithEmailAndPassword(email, password)
-      .then(() => {
-        onClose();
-      })
-      .catch((error) => {
-        const message = error.message;
-        console.log(message);
-      })
-      .finally(() => actions.setSubmitting(false));
-  };
+    const result = isLogin
+      ? signInWithEmailAndPassword(email, password)
+      : signUpWithEmailAndPassword(email, password);
 
-  const handleLoginSubmit = (values, actions) => {
-    const { email, password } = values;
-
-    signInWithEmailAndPassword(email, password)
+    result
       .then(() => {
         onClose();
       })
@@ -132,9 +122,8 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
 
               <Box>
                 <AuthenticationForm
-                  isSignUp={mode === 'signUp'}
-                  handleLoginSubmit={handleLoginSubmit}
-                  handleSignUpSubmit={handleSignUpSubmit}
+                  isSignUp={!isLogin}
+                  handleFormSubmit={handleFormSubmit}
                 />
               </Box>
 

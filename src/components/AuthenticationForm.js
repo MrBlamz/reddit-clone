@@ -7,11 +7,7 @@ import {
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 
-const AuthenticationForm = ({
-  isSignUp,
-  handleSignUpSubmit,
-  handleLoginSubmit,
-}) => {
+const AuthenticationForm = ({ isSignUp, handleFormSubmit }) => {
   const validateEmail = (value) => {
     const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -37,7 +33,7 @@ const AuthenticationForm = ({
   return (
     <Formik
       initialValues={{ email: '', password: '' }}
-      onSubmit={isSignUp ? handleSignUpSubmit : handleLoginSubmit}
+      onSubmit={handleFormSubmit}
     >
       {(props) => (
         <Form>
