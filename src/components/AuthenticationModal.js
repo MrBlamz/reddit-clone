@@ -14,7 +14,10 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import art from '../assets/modalArt.png';
-import { signInWithGoogleAccount } from '../utils/firebase/auth';
+import {
+  signInWithGoogleAccount,
+  signUpWithEmailAndPassword,
+} from '../utils/firebase/auth';
 import AuthenticationForm from './AuthenticationForm';
 
 const GoogleIcon = (props) => (
@@ -40,6 +43,28 @@ const GoogleIcon = (props) => (
 
 const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
   const isLogin = mode === 'login';
+
+  const handleSignUpSubmit = (values, actions) => {
+    const { email, password } = values;
+
+    signUpWithEmailAndPassword(email, password)
+      .then(() => {
+        onClose();
+      })
+      .catch((error) => {
+        const message = error.message;
+        console.log(message);
+      })
+      .finally(() => actions.setSubmitting(false));
+  };
+
+  const handleLoginSubmit = (values, actions) => {
+    setTimeout(() => {
+      console.log('Logging in');
+      alert(JSON.stringify(values, null, 2));
+      actions.setSubmitting(false);
+    }, 1000);
+  };
 
   return (
     <Modal
@@ -99,7 +124,11 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
               </HStack>
 
               <Box>
-                <AuthenticationForm signUp={mode === 'signUp'} />
+                <AuthenticationForm
+                  isSignUp={mode === 'signUp'}
+                  handleLoginSubmit={handleLoginSubmit}
+                  handleSignUpSubmit={handleSignUpSubmit}
+                />
               </Box>
 
               <Box mt='10%'>
