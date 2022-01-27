@@ -1,36 +1,24 @@
+import { useContext, useState } from 'react';
 import {
   Button,
   Flex,
   HStack,
-  Icon,
   Image,
   Input,
   InputGroup,
   InputLeftElement,
   Link,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuGroup,
-  MenuItem,
-  MenuList,
-  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { AiOutlineUser } from 'react-icons/ai';
-import { BiChevronDown } from 'react-icons/bi';
-import { BsMoon, BsSun } from 'react-icons/bs';
-import { FiLogIn, FiLogOut } from 'react-icons/fi';
 import { IoSearchOutline } from 'react-icons/io5';
 import logo from '../assets/logo/logo.svg';
 import brandTextWhite from '../assets/logo/text_white_theme.svg';
 import brandTextDark from '../assets/logo/text_dark_theme.svg';
+import UserMenu from './UserMenu';
 import AuthenticationModal from './AuthenticationModal';
-import { useContext, useState } from 'react';
 import UserContext from '../contexts/UserContext';
-import { signOut } from '../utils/firebase/auth';
 
 const Logo = () => {
   const brandName = useColorModeValue(brandTextWhite, brandTextDark);
@@ -78,58 +66,6 @@ const SearchBar = () => {
         _hover={{ outline: 'none' }}
       />
     </InputGroup>
-  );
-};
-
-const UserMenu = ({ user, openAuthenticationModal }) => {
-  const { colorMode, toggleColorMode } = useColorMode();
-
-  return (
-    <Menu>
-      <MenuButton as={Button} variant='transparent' fontSize='xl' ml={-2}>
-        <Flex>
-          <Icon
-            as={AiOutlineUser}
-            color={useColorModeValue('brand.iconLight', 'brand.iconDark')}
-          />
-          <Icon
-            as={BiChevronDown}
-            color={useColorModeValue('brand.dark', 'brand.light')}
-          />
-        </Flex>
-      </MenuButton>
-      <MenuList
-        fontSize='lg'
-        bg={useColorModeValue('brand.light', 'brand.dark')}
-        borderColor={useColorModeValue('brand.borderLight', 'brand.borderDark')}
-        minW={0}
-      >
-        <MenuGroup title='Options'>
-          <MenuItem onClick={toggleColorMode}>
-            <HStack spacing={4}>
-              <Icon boxSize='20px' as={useColorModeValue(BsMoon, BsSun)} />
-              <span>{colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
-            </HStack>
-          </MenuItem>
-        </MenuGroup>
-        <MenuDivider />
-        {user ? (
-          <MenuItem onClick={signOut}>
-            <HStack spacing={4}>
-              <Icon as={FiLogOut} boxSize='20px' />
-              <span>Logout</span>
-            </HStack>
-          </MenuItem>
-        ) : (
-          <MenuItem onClick={() => openAuthenticationModal('login')}>
-            <HStack spacing={4}>
-              <Icon as={FiLogIn} boxSize='20px' />
-              <span>Log In / Sign Up</span>
-            </HStack>
-          </MenuItem>
-        )}
-      </MenuList>
-    </Menu>
   );
 };
 
