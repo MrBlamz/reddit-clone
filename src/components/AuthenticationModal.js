@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   Text,
   useColorModeValue,
+  useToast,
 } from '@chakra-ui/react';
 import art from '../assets/modalArt.png';
 import { FcGoogle } from 'react-icons/fc';
@@ -21,9 +22,14 @@ import {
   signInWithEmailAndPassword,
 } from '../utils/firebase/auth';
 import AuthenticationForm from './AuthenticationForm';
+import Toast from './Toast';
 
 const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
   const isLogin = mode === 'login';
+  const toast = useToast({
+    duration: 3000,
+    position: 'bottom',
+  });
 
   const handleFormSubmit = (values, actions) => {
     const { email, password } = values;
@@ -35,12 +41,53 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
     result
       .then(() => {
         onClose();
+        isLogin
+          ? toast({
+              render: () => <Toast variant='success' text='Welcome Back!' />,
+            })
+          : toast({
+              render: () => (
+                <Toast
+                  variant='success'
+                  text='Your account has been registered!'
+                />
+              ),
+            });
       })
       .catch((error) => {
-        const message = error.message;
-        console.log(message);
+        toast({
+          render: () => <Toast variant='error' text={error.message} />,
+        });
       })
       .finally(() => actions.setSubmitting(false));
+  };
+
+  const handleGoogleButtonClick = () => {
+    signInWithGoogleAccount()
+      .then((result) => {
+        const { creationTime, lastSignInTime } =
+          result.user.auth.currentUser.metadata;
+        const isNewUser = creationTime === lastSignInTime;
+
+        onClose();
+        isNewUser
+          ? toast({
+              render: () => (
+                <Toast
+                  variant='success'
+                  text='Your account has been registered!'
+                />
+              ),
+            })
+          : toast({
+              render: () => <Toast variant='success' text='Welcome Back!' />,
+            });
+      })
+      .catch((error) => {
+        toast({
+          render: () => <Toast variant='error' text={error.message} />,
+        });
+      });
   };
 
   return (
@@ -83,9 +130,7 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
                   variant='outline'
                   fontWeight='normal'
                   w='full'
-                  onClick={() =>
-                    signInWithGoogleAccount().then(() => onClose())
-                  }
+                  onClick={handleGoogleButtonClick}
                 >
                   <Icon as={FcGoogle} boxSize='20px' mr='auto' />
                   <Text mr='auto'>
