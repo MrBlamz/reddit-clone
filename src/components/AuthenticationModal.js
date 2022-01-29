@@ -24,6 +24,18 @@ import {
 import AuthenticationForm from './AuthenticationForm';
 import Toast from './Toast';
 
+const SuccessfulSignInToast = ({ username = '' }) => (
+  <Toast variant='success' text='Welcome Back!' />
+);
+
+const SuccessfulSignUpToast = () => (
+  <Toast variant='success' text='Your account has been registered!' />
+);
+
+const FailedAuthenticationToast = ({ error }) => (
+  <Toast variant='error' text={error} />
+);
+
 const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
   const isLogin = mode === 'login';
   const toast = useToast({
@@ -41,22 +53,14 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
     result
       .then(() => {
         onClose();
-        isLogin
-          ? toast({
-              render: () => <Toast variant='success' text='Welcome Back!' />,
-            })
-          : toast({
-              render: () => (
-                <Toast
-                  variant='success'
-                  text='Your account has been registered!'
-                />
-              ),
-            });
+        toast({
+          render: () =>
+            isLogin ? <SuccessfulSignInToast /> : <SuccessfulSignUpToast />,
+        });
       })
       .catch((error) => {
         toast({
-          render: () => <Toast variant='error' text={error.message} />,
+          render: () => <FailedAuthenticationToast error={error.message} />,
         });
       })
       .finally(() => actions.setSubmitting(false));
@@ -70,22 +74,14 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
         const isNewUser = creationTime === lastSignInTime;
 
         onClose();
-        isNewUser
-          ? toast({
-              render: () => (
-                <Toast
-                  variant='success'
-                  text='Your account has been registered!'
-                />
-              ),
-            })
-          : toast({
-              render: () => <Toast variant='success' text='Welcome Back!' />,
-            });
+        toast({
+          render: () =>
+            isNewUser ? <SuccessfulSignUpToast /> : <SuccessfulSignInToast />,
+        });
       })
       .catch((error) => {
         toast({
-          render: () => <Toast variant='error' text={error.message} />,
+          render: () => <FailedAuthenticationToast error={error.message} />,
         });
       });
   };
