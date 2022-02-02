@@ -1,10 +1,12 @@
-import { app } from '../../firebase.config';
+import app from '../../firebase.config';
 import {
   createUserWithEmailAndPassword,
+  fetchSignInMethodsForEmail,
   getAuth,
   GoogleAuthProvider,
   signInWithEmailAndPassword as loginWithEmailAndPassword,
   signInWithPopup,
+  updateProfile,
 } from 'firebase/auth';
 
 const provider = new GoogleAuthProvider();
@@ -24,3 +26,12 @@ export const signUpWithEmailAndPassword = (email, password) => {
 };
 
 export const signOut = () => auth.signOut();
+
+export const checkIfEmailIsNotRegistered = async (email) => {
+  const result = await fetchSignInMethodsForEmail(auth, email);
+  return result.length === 0;
+};
+
+export const updateUserProfile = async (data) => {
+  updateProfile(auth.currentUser, data);
+};
