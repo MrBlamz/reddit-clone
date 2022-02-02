@@ -20,12 +20,15 @@ import {
   signInWithGoogleAccount,
   signUpWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateUserProfile,
 } from '../utils/firebase/auth';
-import AuthenticationForm from './AuthenticationForm';
 import Toast from './Toast';
+import SignUpForm from './SignUpForm';
+import { writeUsernameInDb } from '../utils/firebase/firestore';
+import SignInForm from './SignInForm';
 
 const SuccessfulSignInToast = ({ username = '' }) => (
-  <Toast variant='success' text='Welcome Back!' />
+  <Toast variant='success' text={`Welcome back ${username}`} />
 );
 
 const SuccessfulSignUpToast = () => (
@@ -43,19 +46,36 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
     position: 'bottom',
   });
 
-  const handleFormSubmit = (values, actions) => {
-    const { email, password } = values;
+  const handleSignUpFormSubmit = (values, actions) => {
+    const { email, password, username } = values;
 
-    const result = isLogin
-      ? signInWithEmailAndPassword(email, password)
-      : signUpWithEmailAndPassword(email, password);
-
-    result
+    signUpWithEmailAndPassword(email, password)
+      .then(({ user }) => {
+        updateUserProfile({ displayName: username });
+        writeUsernameInDb(username, user.uid);
+      })
       .then(() => {
         onClose();
         toast({
-          render: () =>
-            isLogin ? <SuccessfulSignInToast /> : <SuccessfulSignUpToast />,
+          render: () => <SuccessfulSignUpToast />,
+        });
+      })
+      .catch((error) => {
+        toast({
+          render: () => <FailedAuthenticationToast error={error.message} />,
+        });
+      })
+      .finally(() => actions.setSubmitting(false));
+  };
+
+  const handleSignInFormSubmit = (values, actions) => {
+    const { email, password } = values;
+
+    signInWithEmailAndPassword(email, password)
+      .then(({ user }) => {
+        onClose();
+        toast({
+          render: () => <SuccessfulSignInToast username={user.displayName} />,
         });
       })
       .catch((error) => {
@@ -142,10 +162,11 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
               </HStack>
 
               <Box>
-                <AuthenticationForm
-                  isSignUp={!isLogin}
-                  handleFormSubmit={handleFormSubmit}
-                />
+                {isLogin ? (
+                  <SignInForm handleSubmit={handleSignInFormSubmit} />
+                ) : (
+                  <SignUpForm handleSubmit={handleSignUpFormSubmit} />
+                )}
               </Box>
 
               <Box mt='10%'>
