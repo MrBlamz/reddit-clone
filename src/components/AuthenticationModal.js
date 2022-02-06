@@ -20,11 +20,10 @@ import {
   signInWithGoogleAccount,
   signUpWithEmailAndPassword,
   signInWithEmailAndPassword,
-  updateUserProfile,
 } from '../utils/firebase/auth';
 import Toast from './Toast';
 import SignUpForm from './SignUpForm';
-import { writeUsernameInDb } from '../utils/firebase/firestore';
+import { fetchUsername, writeUsernameInDb } from '../utils/firebase/firestore';
 import SignInForm from './SignInForm';
 
 const SuccessfulSignInToast = ({ username = '' }) => (
@@ -51,7 +50,6 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
 
     signUpWithEmailAndPassword(email, password)
       .then(({ user }) => {
-        updateUserProfile({ displayName: username });
         writeUsernameInDb(username, user.uid);
       })
       .then(() => {
@@ -72,10 +70,11 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
     const { email, password } = values;
 
     signInWithEmailAndPassword(email, password)
-      .then(({ user }) => {
+      .then(async ({ user }) => {
+        const username = await fetchUsername(user.uid);
         onClose();
         toast({
-          render: () => <SuccessfulSignInToast username={user.displayName} />,
+          render: () => <SuccessfulSignInToast username={username} />,
         });
       })
       .catch((error) => {
