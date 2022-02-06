@@ -1,18 +1,17 @@
 import { useState, useEffect } from 'react';
 import { auth } from '../utils/firebase/auth';
+import { fetchUserData } from '../utils/firebase/firestore';
 
 const useAuthListener = () => {
-  const [user, setUser] = useState(
-    JSON.parse(localStorage.getItem('authUser')) || {}
-  );
+  const [user, setUser] = useState({});
 
   useEffect(() => {
-    const listener = auth.onAuthStateChanged((authUser) => {
+    const listener = auth.onAuthStateChanged(async (authUser) => {
       if (authUser) {
-        localStorage.setItem('authUser', JSON.stringify(authUser));
+        const userData = await fetchUserData(authUser.uid);
+        authUser.data = userData;
         setUser(authUser);
       } else {
-        localStorage.removeItem('authUser');
         setUser(null);
       }
     });

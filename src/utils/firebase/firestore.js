@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   setDoc,
@@ -26,7 +27,28 @@ export const checkIfUsernameIsAvailable = async (username) => {
   return isAvailable;
 };
 
-export const writeUsernameInDb = async (username, uid) => {
+export const writeUsernameInDb = (username, userID) => {
   const sanitizedUsername = username.toLowerCase();
-  return setDoc(doc(db, 'usernames', sanitizedUsername), { uid });
+  return Promise.all([
+    setDoc(doc(db, 'usernames', sanitizedUsername), { userID }),
+    setDoc(doc(db, 'users', userID), { username: username }),
+  ]);
+};
+
+export const fetchUsername = async (userID) => {
+  const docRef = doc(db, 'users', userID);
+  const docSnapshot = await getDoc(docRef);
+
+  if (docSnapshot.exists()) {
+    return docSnapshot.data().username;
+  }
+
+  throw new Error('Username not found');
+};
+
+export const fetchUserData = async (userID) => {
+  const docRef = doc(db, 'users', userID);
+  const docSnapshot = await getDoc(docRef);
+
+  return docSnapshot.exists() ? docSnapshot.data() : null;
 };
