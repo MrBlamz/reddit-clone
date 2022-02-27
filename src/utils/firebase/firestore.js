@@ -50,5 +50,5 @@ export const fetchUserData = async (userID) => {
   const docRef = doc(db, 'users', userID);
   const docSnapshot = await getDoc(docRef);
 
-  return docSnapshot.exists() ? docSnapshot.data() : null;
+  return docSnapshot.exists() ? docSnapshot.data() : {};
 };
