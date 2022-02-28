@@ -73,41 +73,39 @@ const SignedOutMenu = ({
   </Menu>
 );
 
-const SignedInMenu = ({ username, toggleColorMode, colorMode }) => {
-  return (
-    <Menu>
-      <MenuButton
-        as={Button}
-        rounded='full'
-        variant='link'
-        cursor='pointer'
-        minW={0}
-      >
-        <Avatar size='sm' src={defaultAvatar} />
-      </MenuButton>
-      <MenuList
-        alignItems='center'
-        bg={useColorModeValue('brand.light', 'brand.dark')}
-        borderColor={useColorModeValue('brand.borderLight', 'brand.borderDark')}
-      >
-        <br />
-        <Center>
-          <Avatar size='2xl' src={defaultAvatar} />
-        </Center>
-        <br />
-        <Center>
-          <Text fontWeight='bold'>{username}</Text>
-        </Center>
-        <br />
-        <MenuDivider />
-        <MenuItem onClick={toggleColorMode}>
-          {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
-        </MenuItem>
-        <MenuItem onClick={signOut}>Logout</MenuItem>
-      </MenuList>
-    </Menu>
-  );
-};
+const SignedInMenu = ({ username, toggleColorMode, colorMode }) => (
+  <Menu>
+    <MenuButton
+      as={Button}
+      rounded='full'
+      variant='link'
+      cursor='pointer'
+      minW={0}
+    >
+      <Avatar size='sm' src={defaultAvatar} />
+    </MenuButton>
+    <MenuList
+      alignItems='center'
+      bg={useColorModeValue('brand.light', 'brand.dark')}
+      borderColor={useColorModeValue('brand.borderLight', 'brand.borderDark')}
+    >
+      <br />
+      <Center>
+        <Avatar size='2xl' src={defaultAvatar} />
+      </Center>
+      <br />
+      <Center>
+        <Text fontWeight='bold'>{username}</Text>
+      </Center>
+      <br />
+      <MenuDivider />
+      <MenuItem onClick={toggleColorMode}>
+        {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
+      </MenuItem>
+      <MenuItem onClick={signOut}>Logout</MenuItem>
+    </MenuList>
+  </Menu>
+);
 
 const UserMenu = ({ user, openAuthenticationModal }) => {
   const { colorMode, toggleColorMode } = useColorMode();
