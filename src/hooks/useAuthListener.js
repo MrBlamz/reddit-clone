@@ -6,7 +6,9 @@ const useAuthListener = () => {
   const authUser = JSON.parse(localStorage.getItem('authUser'));
   const authUserData = JSON.parse(localStorage.getItem('authUserData'));
 
-  const [user, setUser] = useState({ ...authUser, data: authUserData } || null);
+  const [user, setUser] = useState(
+    authUser ? { ...authUser, data: authUserData } : null
+  );
 
   useEffect(() => {
     const listener = auth.onAuthStateChanged(async (authUser) => {
