@@ -21,6 +21,7 @@ import { BiChevronDown } from 'react-icons/bi';
 import { BsMoon, BsSun } from 'react-icons/bs';
 import { FiLogIn } from 'react-icons/fi';
 import { signOut } from '../utils/firebase/auth';
+import { useSelector } from 'react-redux';
 
 const Item = ({ onClick, icon, text, ...rest }) => (
   <MenuItem onClick={onClick} {...rest}>
@@ -73,52 +74,51 @@ const SignedOutMenu = ({
   </Menu>
 );
 
-const SignedInMenu = ({ username, toggleColorMode, colorMode }) => (
-  <Menu>
-    <MenuButton
-      as={Button}
-      rounded='full'
-      variant='link'
-      cursor='pointer'
-      minW={0}
-    >
-      <Avatar size='sm' src={defaultAvatar} />
-    </MenuButton>
-    <MenuList
-      alignItems='center'
-      bg={useColorModeValue('brand.light', 'brand.dark')}
-      borderColor={useColorModeValue('brand.borderLight', 'brand.borderDark')}
-    >
-      <br />
-      <Center>
-        <Avatar size='2xl' src={defaultAvatar} />
-      </Center>
-      <br />
-      <Center>
-        <Text fontWeight='bold'>{username}</Text>
-      </Center>
-      <br />
-      <MenuDivider />
-      <MenuItem onClick={toggleColorMode}>
-        {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
-      </MenuItem>
-      <MenuItem onClick={signOut}>Logout</MenuItem>
-    </MenuList>
-  </Menu>
-);
+const SignedInMenu = ({ toggleColorMode, colorMode }) => {
+  const username =
+    useSelector((state) => state.auth.userData.username) || 'Redditor';
 
-const UserMenu = ({ user, openAuthenticationModal }) => {
+  return (
+    <Menu>
+      <MenuButton
+        as={Button}
+        rounded='full'
+        variant='link'
+        cursor='pointer'
+        minW={0}
+      >
+        <Avatar size='sm' src={defaultAvatar} />
+      </MenuButton>
+      <MenuList
+        alignItems='center'
+        bg={useColorModeValue('brand.light', 'brand.dark')}
+        borderColor={useColorModeValue('brand.borderLight', 'brand.borderDark')}
+      >
+        <br />
+        <Center>
+          <Avatar size='2xl' src={defaultAvatar} />
+        </Center>
+        <br />
+        <Center>
+          <Text fontWeight='bold'>{username}</Text>
+        </Center>
+        <br />
+        <MenuDivider />
+        <MenuItem onClick={toggleColorMode}>
+          {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
+        </MenuItem>
+        <MenuItem onClick={signOut}>Logout</MenuItem>
+      </MenuList>
+    </Menu>
+  );
+};
+
+const UserMenu = ({ openAuthenticationModal }) => {
   const { colorMode, toggleColorMode } = useColorMode();
-  // Default to an empty object to prevent error when user is null (Signed out)
-  const { data = {} } = user || {};
-  const { username = 'Username' } = data;
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-  return user ? (
-    <SignedInMenu
-      colorMode={colorMode}
-      toggleColorMode={toggleColorMode}
-      username={username}
-    />
+  return isLoggedIn ? (
+    <SignedInMenu colorMode={colorMode} toggleColorMode={toggleColorMode} />
   ) : (
     <SignedOutMenu
       colorMode={colorMode}

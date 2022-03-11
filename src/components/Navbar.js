@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Flex,
@@ -18,7 +18,7 @@ import brandTextWhite from '../assets/logo/text_white_theme.svg';
 import brandTextDark from '../assets/logo/text_dark_theme.svg';
 import UserMenu from './UserMenu';
 import AuthenticationModal from './AuthenticationModal';
-import UserContext from '../contexts/UserContext';
+import { useSelector } from 'react-redux';
 
 const Logo = () => {
   const brandName = useColorModeValue(brandTextWhite, brandTextDark);
@@ -70,7 +70,7 @@ const SearchBar = () => {
 };
 
 const Navbar = () => {
-  const user = useContext(UserContext);
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentAuthenticationMode, setCurrentAuthenticationMode] =
     useState('login');
@@ -105,7 +105,7 @@ const Navbar = () => {
       <HStack spacing='4'>
         <HStack
           spacing='3'
-          display={user ? 'none' : { base: 'none', lg: 'flex' }}
+          display={isLoggedIn ? 'none' : { base: 'none', lg: 'flex' }}
         >
           <Button
             variant='secondary'
@@ -125,10 +125,7 @@ const Navbar = () => {
           </Button>
         </HStack>
         <Flex>
-          <UserMenu
-            user={user}
-            openAuthenticationModal={openAuthenticationModal}
-          />
+          <UserMenu openAuthenticationModal={openAuthenticationModal} />
         </Flex>
       </HStack>
 
