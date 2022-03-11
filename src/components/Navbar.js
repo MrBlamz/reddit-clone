@@ -19,6 +19,7 @@ import brandTextDark from '../assets/logo/text_dark_theme.svg';
 import UserMenu from './UserMenu';
 import AuthenticationModal from './AuthenticationModal';
 import { useSelector } from 'react-redux';
+import { selectAuthStatus } from '../store/auth';
 
 const Logo = () => {
   const brandName = useColorModeValue(brandTextWhite, brandTextDark);
@@ -70,7 +71,7 @@ const SearchBar = () => {
 };
 
 const Navbar = () => {
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const isLoggedIn = useSelector(selectAuthStatus);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentAuthenticationMode, setCurrentAuthenticationMode] =
     useState('login');

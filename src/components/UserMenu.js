@@ -22,6 +22,7 @@ import { BsMoon, BsSun } from 'react-icons/bs';
 import { FiLogIn } from 'react-icons/fi';
 import { signOut } from '../utils/firebase/auth';
 import { useSelector } from 'react-redux';
+import { selectAuthStatus, selectUsername } from '../store/auth';
 
 const Item = ({ onClick, icon, text, ...rest }) => (
   <MenuItem onClick={onClick} {...rest}>
@@ -75,8 +76,7 @@ const SignedOutMenu = ({
 );
 
 const SignedInMenu = ({ toggleColorMode, colorMode }) => {
-  const username =
-    useSelector((state) => state.auth.userData.username) || 'Redditor';
+  const username = useSelector(selectUsername) || 'Redditor';
 
   return (
     <Menu>
@@ -115,7 +115,7 @@ const SignedInMenu = ({ toggleColorMode, colorMode }) => {
 
 const UserMenu = ({ openAuthenticationModal }) => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+  const isLoggedIn = useSelector(selectAuthStatus);
 
   return isLoggedIn ? (
     <SignedInMenu colorMode={colorMode} toggleColorMode={toggleColorMode} />
