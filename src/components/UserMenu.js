@@ -21,8 +21,9 @@ import { BiChevronDown } from 'react-icons/bi';
 import { BsMoon, BsSun } from 'react-icons/bs';
 import { FiLogIn } from 'react-icons/fi';
 import { signOut } from '../utils/firebase/auth';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectAuthStatus, selectUsername } from '../store/auth';
+import { openLoginModal } from '../store/ui';
 
 const Item = ({ onClick, icon, text, ...rest }) => (
   <MenuItem onClick={onClick} {...rest}>
@@ -33,47 +34,47 @@ const Item = ({ onClick, icon, text, ...rest }) => (
   </MenuItem>
 );
 
-const SignedOutMenu = ({
-  toggleColorMode,
-  colorMode,
-  openAuthenticationModal,
-}) => (
-  <Menu>
-    <MenuButton as={Button} variant='transparent' fontSize='xl' ml={-2}>
-      <Flex>
-        <Icon
-          as={AiOutlineUser}
-          color={useColorModeValue('brand.iconLight', 'brand.iconDark')}
-        />
-        <Icon
-          as={BiChevronDown}
-          color={useColorModeValue('brand.dark', 'brand.light')}
-        />
-      </Flex>
-    </MenuButton>
-    <MenuList
-      fontSize='lg'
-      bg={useColorModeValue('brand.light', 'brand.dark')}
-      borderColor={useColorModeValue('brand.borderLight', 'brand.borderDark')}
-      minW={0}
-    >
-      <MenuGroup title='Options'>
-        <Item
-          onClick={toggleColorMode}
-          icon={useColorModeValue(BsMoon, BsSun)}
-          text={colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
-        />
-      </MenuGroup>
-      <MenuDivider />
+const SignedOutMenu = ({ toggleColorMode, colorMode }) => {
+  const dispatch = useDispatch();
 
-      <Item
-        onClick={() => openAuthenticationModal('login')}
-        icon={FiLogIn}
-        text='Log In / Sign Up'
-      />
-    </MenuList>
-  </Menu>
-);
+  return (
+    <Menu>
+      <MenuButton as={Button} variant='transparent' fontSize='xl' ml={-2}>
+        <Flex>
+          <Icon
+            as={AiOutlineUser}
+            color={useColorModeValue('brand.iconLight', 'brand.iconDark')}
+          />
+          <Icon
+            as={BiChevronDown}
+            color={useColorModeValue('brand.dark', 'brand.light')}
+          />
+        </Flex>
+      </MenuButton>
+      <MenuList
+        fontSize='lg'
+        bg={useColorModeValue('brand.light', 'brand.dark')}
+        borderColor={useColorModeValue('brand.borderLight', 'brand.borderDark')}
+        minW={0}
+      >
+        <MenuGroup title='Options'>
+          <Item
+            onClick={toggleColorMode}
+            icon={useColorModeValue(BsMoon, BsSun)}
+            text={colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
+          />
+        </MenuGroup>
+        <MenuDivider />
+
+        <Item
+          onClick={() => dispatch(openLoginModal())}
+          icon={FiLogIn}
+          text='Log In / Sign Up'
+        />
+      </MenuList>
+    </Menu>
+  );
+};
 
 const SignedInMenu = ({ toggleColorMode, colorMode }) => {
   const username = useSelector(selectUsername) || 'Redditor';
@@ -113,18 +114,14 @@ const SignedInMenu = ({ toggleColorMode, colorMode }) => {
   );
 };
 
-const UserMenu = ({ openAuthenticationModal }) => {
+const UserMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const isLoggedIn = useSelector(selectAuthStatus);
 
   return isLoggedIn ? (
     <SignedInMenu colorMode={colorMode} toggleColorMode={toggleColorMode} />
   ) : (
-    <SignedOutMenu
-      colorMode={colorMode}
-      toggleColorMode={toggleColorMode}
-      openAuthenticationModal={openAuthenticationModal}
-    />
+    <SignedOutMenu colorMode={colorMode} toggleColorMode={toggleColorMode} />
   );
 };
 

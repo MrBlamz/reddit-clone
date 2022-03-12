@@ -25,6 +25,13 @@ import Toast from './Toast';
 import SignUpForm from './SignUpForm';
 import { fetchUsername, writeUsernameInDb } from '../utils/firebase/firestore';
 import SignInForm from './SignInForm';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  changeAuthenticationModalMode,
+  closeAuthenticationModal,
+  selectAuthenticationModalMode,
+  selectAuthenticationModalStatus,
+} from '../store/ui';
 
 const SuccessfulSignInToast = ({ username = '' }) => (
   <Toast variant='success' text={`Welcome back ${username}`} />
@@ -38,8 +45,11 @@ const FailedAuthenticationToast = ({ error }) => (
   <Toast variant='error' text={error} />
 );
 
-const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
-  const isLogin = mode === 'login';
+const AuthenticationModal = () => {
+  const dispatch = useDispatch();
+  const isLogin = useSelector(selectAuthenticationModalMode);
+  const isOpen = useSelector(selectAuthenticationModalStatus);
+
   const toast = useToast({
     duration: 3000,
     position: 'bottom',
@@ -53,7 +63,8 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
         writeUsernameInDb(username, user.uid);
       })
       .then(() => {
-        onClose();
+        dispatch(closeAuthenticationModal());
+
         toast({
           render: () => <SuccessfulSignUpToast />,
         });
@@ -72,7 +83,9 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
     signInWithEmailAndPassword(email, password)
       .then(async ({ user }) => {
         const username = await fetchUsername(user.uid);
-        onClose();
+
+        dispatch(closeAuthenticationModal());
+
         toast({
           render: () => <SuccessfulSignInToast username={username} />,
         });
@@ -92,7 +105,8 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
           result.user.auth.currentUser.metadata;
         const isNewUser = creationTime === lastSignInTime;
 
-        onClose();
+        dispatch(closeAuthenticationModal());
+
         toast({
           render: () =>
             isNewUser ? <SuccessfulSignUpToast /> : <SuccessfulSignInToast />,
@@ -108,7 +122,7 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={() => dispatch(closeAuthenticationModal())}
       isCentered
       bg={useColorModeValue('brand.light', 'brand.dark')}
     >
@@ -177,7 +191,7 @@ const AuthenticationModal = ({ mode, setMode, isOpen, onClose }) => {
                     variant='primary'
                     fontSize='smaller'
                     fontWeight='bold'
-                    onClick={() => setMode(isLogin ? 'signUp' : 'login')}
+                    onClick={() => dispatch(changeAuthenticationModalMode())}
                   >
                     {isLogin ? 'SIGN UP' : 'LOG IN'}
                   </Link>

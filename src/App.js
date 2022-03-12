@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { listenForAuthChanges } from './store/auth';
+import AuthenticationModal from './components/AuthenticationModal';
 
 function App() {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
       </Routes>
+      <AuthenticationModal />
     </div>
   );
 }
