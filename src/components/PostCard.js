@@ -18,6 +18,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { BiDownvote, BiShare, BiUpvote } from 'react-icons/bi';
 import { BsArrowsAngleExpand, BsBookmark, BsCardText } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
+import { getElapsedTimeAsString } from '../utils/date';
 
 const ActionButton = ({ ariaLabel, icon, text, ...rest }) => (
   <Button
@@ -97,7 +98,7 @@ const DocumentIcon = ({ ...rest }) => (
   </Center>
 );
 
-const Header = ({ title, communityName, author, timestamp }) => (
+const Header = ({ title, communityName, author, elapsedTime }) => (
   <Flex direction='column' alignItems='flex-start'>
     <Box>
       <Text as='h3' fontWeight='600'>
@@ -109,29 +110,28 @@ const Header = ({ title, communityName, author, timestamp }) => (
         <Text fontWeight='bold'>{`r/${communityName}`}</Text>
       </Link>
       <Text>{`Posted by u/${author}`}</Text>
-      <Text>{timestamp}</Text>
+      <Text>{elapsedTime}</Text>
     </HStack>
   </Flex>
 );
 
 const PostCard = ({
+  title,
   author,
-  comments,
+  commentsNumber,
   communityName,
-  content,
+  upVotes,
   downVotes,
+  timestamp,
   isFirst,
   isLast,
-  timestamp,
-  title,
-  upVotes,
 }) => {
   const ACTION_BUTTONS = [
     {
       ariaLabel: 'Open Comments',
       icon: <VscComment />,
-      text: `${comments.length} ${
-        comments.length === 1 ? 'Comment' : 'Comments'
+      text: `${commentsNumber} ${
+        commentsNumber === 1 ? 'Comment' : 'Comments'
       }`,
     },
     {
@@ -177,7 +177,7 @@ const PostCard = ({
               title={title}
               author={author}
               communityName={communityName}
-              timestamp={timestamp}
+              elapsedTime={getElapsedTimeAsString(timestamp)}
             />
 
             <Flex>
@@ -217,7 +217,7 @@ const PostCard = ({
                   title={title}
                   author={author}
                   communityName={communityName}
-                  timestamp={timestamp}
+                  elapsedTime={getElapsedTimeAsString(timestamp)}
                 />
                 <HStack mt='auto'>
                   <ExpandButton />
