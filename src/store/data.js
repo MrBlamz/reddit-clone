@@ -24,4 +24,10 @@ export const selectPosts = createSelector(
   (data) => data.posts
 );
 
+export const selectPost = (id) =>
+  createSelector(
+    (state) => state.data,
+    (data) => data.posts.find((post) => post.id === id)
+  );
+
 export default dataSlice.reducer;
