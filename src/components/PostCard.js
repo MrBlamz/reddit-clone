@@ -14,7 +14,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { BiDownvote, BiShare, BiUpvote } from 'react-icons/bi';
 import { BsArrowsAngleExpand, BsBookmark, BsCardText } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
@@ -98,22 +98,31 @@ const DocumentIcon = ({ ...rest }) => (
   </Center>
 );
 
-const Header = ({ title, communityName, author, elapsedTime }) => (
-  <Flex direction='column' alignItems='flex-start'>
-    <Box>
-      <Text as='h3' fontWeight='600'>
-        {title}
-      </Text>
-    </Box>
-    <HStack fontSize='xs'>
-      <Link as={RouterLink} to={`/r/${communityName}`}>
-        <Text fontWeight='bold'>{`r/${communityName}`}</Text>
-      </Link>
-      <Text>{`Posted by u/${author}`}</Text>
-      <Text>{elapsedTime}</Text>
-    </HStack>
-  </Flex>
-);
+const Header = ({ title, communityName, author, elapsedTime }) => {
+  const navigate = useNavigate();
+
+  const handleClick = (event) => {
+    event.stopPropagation();
+    navigate(`/r/${communityName}`);
+  };
+
+  return (
+    <Flex direction='column' alignItems='flex-start'>
+      <Box>
+        <Text as='h3' fontWeight='600'>
+          {title}
+        </Text>
+      </Box>
+      <HStack fontSize='xs'>
+        <Link onClick={handleClick}>
+          <Text fontWeight='bold'>{`r/${communityName}`}</Text>
+        </Link>
+        <Text>{`Posted by u/${author}`}</Text>
+        <Text>{elapsedTime}</Text>
+      </HStack>
+    </Flex>
+  );
+};
 
 const PostCard = ({
   title,
@@ -125,6 +134,7 @@ const PostCard = ({
   timestamp,
   isFirst,
   isLast,
+  ...rest
 }) => {
   const ACTION_BUTTONS = [
     {
@@ -169,6 +179,7 @@ const PostCard = ({
         border: '1px',
         borderColor: useColorModeValue('brand.dark', 'brand.light'),
       }}
+      {...rest}
     >
       {isMobile ? (
         <>
