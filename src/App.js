@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { listenForAuthChanges } from './store/auth';
 import AuthenticationModal from './components/AuthenticationModal';
+import Community from './pages/Community';
+import CommunityLayout from './layouts/CommunityLayout';
 
 function App() {
   const dispatch = useDispatch();
@@ -20,6 +22,9 @@ function App() {
       <Navbar />
       <Routes>
         <Route path='/' element={<Home />} />
+        <Route path='r/:communityName' element={<CommunityLayout />}>
+          <Route index element={<Community />} />
+        </Route>
       </Routes>
       <AuthenticationModal />
     </div>
