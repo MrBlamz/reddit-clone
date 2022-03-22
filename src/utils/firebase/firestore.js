@@ -4,7 +4,9 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  query,
   setDoc,
+  where,
 } from 'firebase/firestore';
 import app from '../../firebase.config';
 
@@ -27,16 +29,16 @@ export const checkIfUsernameIsAvailable = async (username) => {
   return isAvailable;
 };
 
-export const writeUsernameInDb = (username, userID) => {
+export const writeUsernameInDb = (username, userId) => {
   const sanitizedUsername = username.toLowerCase();
   return Promise.all([
-    setDoc(doc(db, 'usernames', sanitizedUsername), { userID }),
-    setDoc(doc(db, 'users', userID), { username: username }),
+    setDoc(doc(db, 'usernames', sanitizedUsername), { userId }),
+    setDoc(doc(db, 'users', userId), { username: username }),
   ]);
 };
 
-export const fetchUsername = async (userID) => {
-  const docRef = doc(db, 'users', userID);
+export const fetchUsername = async (userId) => {
+  const docRef = doc(db, 'users', userId);
   const docSnapshot = await getDoc(docRef);
 
   if (docSnapshot.exists()) {
@@ -46,8 +48,8 @@ export const fetchUsername = async (userID) => {
   throw new Error('Username not found');
 };
 
-export const fetchUserData = async (userID) => {
-  const docRef = doc(db, 'users', userID);
+export const fetchUserData = async (userId) => {
+  const docRef = doc(db, 'users', userId);
   const docSnapshot = await getDoc(docRef);
 
   return docSnapshot.exists() ? docSnapshot.data() : {};
@@ -56,6 +58,32 @@ export const fetchUserData = async (userID) => {
 export const fetchPosts = async () => {
   const posts = [];
   const querySnapshot = await getDocs(collection(db, 'posts'));
+  querySnapshot.forEach((doc) => posts.push(doc.data()));
+  return posts;
+};
+
+export const fetchPost = async (postId) => {
+  const docRef = doc(db, 'posts', postId);
+  const docSnapshot = await getDoc(docRef);
+
+  return docSnapshot.exists() ? docSnapshot.data() : {};
+};
+
+export const fetchPostComments = async (postId) => {
+  const comments = [];
+  const q = query(collection(db, 'comments'), where('postId', '==', postId));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => comments.push(doc.data()));
+  return comments;
+};
+
+export const fetchCommunityPosts = async (communityName) => {
+  const posts = [];
+  const q = query(
+    collection(db, 'posts'),
+    where('communityName', '==', communityName)
+  );
+  const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => posts.push(doc.data()));
   return posts;
 };
@@ -75,10 +103,10 @@ export const createCommunity = (name, description) => {
 
 export const createPost = (
   title,
-  userID,
+  userId,
   author,
   content,
-  communityID,
+  communityId,
   communityName
 ) => {
   const docRef = doc(collection(db, 'posts'));
@@ -88,11 +116,11 @@ export const createPost = (
     content,
     author,
     communityName,
-    upVotes: 1,
+    upVotes: 0,
     downVotes: 0,
     commentsNumber: 0,
-    userID,
-    communityID,
+    userId,
+    communityId,
     id: docRef.id,
     timestamp: Date.now(),
   };
