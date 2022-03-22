@@ -30,4 +30,10 @@ export const selectPost = (id) =>
     (data) => data.posts.find((post) => post.id === id)
   );
 
+export const selectCommunityPosts = (communityId) =>
+  createSelector(
+    (state) => state.data,
+    (data) => data.posts.filter((post) => post.CommunityId === communityId)
+  );
+
 export default dataSlice.reducer;
