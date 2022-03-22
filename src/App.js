@@ -2,20 +2,22 @@ import { Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { listenForAuthChanges } from './store/auth';
 import AuthenticationModal from './components/AuthenticationModal';
 import Community from './pages/Community';
 import CommunityLayout from './layouts/CommunityLayout';
+import useUser from './hooks/useUser';
 
 function App() {
-  const dispatch = useDispatch();
+  const { fetchUserFromLocalStorage, listenForAuthChanges } = useUser();
 
-  // Listen for changes in user authentication status
   useEffect(() => {
-    const listener = dispatch(listenForAuthChanges());
+    fetchUserFromLocalStorage();
+  }, [fetchUserFromLocalStorage]);
+
+  useEffect(() => {
+    const listener = listenForAuthChanges();
     return () => listener();
-  }, [dispatch]);
+  }, [listenForAuthChanges]);
 
   return (
     <div className='App'>

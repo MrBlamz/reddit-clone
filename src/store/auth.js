@@ -1,11 +1,15 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
-import { auth } from '../utils/firebase/auth';
-import { fetchUserData } from '../utils/firebase/firestore';
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: { isLoggedIn: false },
   reducers: {
+    fetchUserFromLocalStorage: (state, action) => {
+      state.user = action.payload.user;
+      state.userData = action.payload.userData;
+      state.isLoggedIn = true;
+    },
+
     login: (state, action) => {
       state.user = action.payload.user;
       state.userData = action.payload.userData;
@@ -20,30 +24,7 @@ const authSlice = createSlice({
   },
 });
 
-const actions = authSlice.actions;
-
-// Action Creators
-export const listenForAuthChanges = () => (dispatch) =>
-  auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      let userData;
-
-      try {
-        userData = await fetchUserData(user.uid);
-      } catch (error) {
-        userData = {};
-      }
-
-      dispatch(
-        actions.login({
-          user: user.toJSON(),
-          userData,
-        })
-      );
-    } else {
-      dispatch(actions.logout());
-    }
-  });
+export const actions = authSlice.actions;
 
 // Selectors
 export const selectAuthStatus = createSelector(
