@@ -15,10 +15,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { BiDownvote, BiShare, BiUpvote } from 'react-icons/bi';
+import { BiShare } from 'react-icons/bi';
 import { BsArrowsAngleExpand, BsBookmark, BsCardText } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
 import { getElapsedTimeAsString } from '../utils/date';
+import UpVoteButton from './buttons/UpVoteButton';
+import DownVoteButton from './buttons/DownVoteButton';
 
 const ActionButton = ({ ariaLabel, icon, text, ...rest }) => (
   <Button
@@ -40,33 +42,9 @@ const VotingButtons = ({ upVotes, downVotes, ...rest }) => (
     direction={{ base: 'row', lg: 'column' }}
     {...rest}
   >
-    <IconButton
-      variant='action'
-      aria-label='Upvote'
-      icon={<BiUpvote />}
-      minW={0}
-      p='0px 5px'
-      fontSize='xl'
-      color={useColorModeValue('brand.iconLight', 'brand.iconDark')}
-      _hover={{
-        color: 'brand.primary',
-        bg: useColorModeValue('brand.iconFadedLight', 'brand.iconFadedDark'),
-      }}
-    />
+    <UpVoteButton />
     <Text fontWeight='bold'>{upVotes - downVotes}</Text>
-    <IconButton
-      variant='action'
-      aria-label='Downvote'
-      icon={<BiDownvote />}
-      minW={0}
-      p='0px 5px'
-      fontSize='lg'
-      color={useColorModeValue('brand.iconLight', 'brand.iconDark')}
-      _hover={{
-        color: 'brand.secondary',
-        bg: useColorModeValue('brand.iconFadedLight', 'brand.iconFadedDark'),
-      }}
-    />
+    <DownVoteButton />
   </Stack>
 );
 
