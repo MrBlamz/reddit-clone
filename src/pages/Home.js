@@ -1,7 +1,8 @@
-import { Container, Skeleton } from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
 import { savePosts, selectPosts } from '../store/data';
 import { fetchPosts } from '../utils/firebase/firestore';
@@ -29,7 +30,7 @@ const Home = () => {
   };
 
   const loadingCards = [...Array(10)].map((v, i) => (
-    <Skeleton key={i} height='120px' my={1.5} isLoaded={!isLoading}></Skeleton>
+    <LoadingPostCard key={i} />
   ));
 
   const postCards = posts.map((post, i) => (
