@@ -1,12 +1,14 @@
 import { Container, Skeleton } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 import { savePosts, selectPosts } from '../store/data';
 import { fetchPosts } from '../utils/firebase/firestore';
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const posts = useSelector(selectPosts);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -20,6 +22,11 @@ const Home = () => {
 
     getPostsFromDB();
   }, [dispatch]);
+
+  const handleClick = (communityName, postId) => (event) => {
+    event.stopPropagation();
+    navigate(`/r/${communityName}/${postId}`);
+  };
 
   const loadingCards = [...Array(10)].map((v, i) => (
     <Skeleton key={i} height='120px' my={1.5} isLoaded={!isLoading}></Skeleton>
@@ -37,6 +44,7 @@ const Home = () => {
       downVotes={post.downVotes}
       timestamp={post.timestamp}
       isLast={i === posts.length - 1}
+      onClick={handleClick(post.communityName, post.id)}
     />
   ));
 
