@@ -146,6 +146,7 @@ const PostCard = ({
                 upVotes={upVotes}
                 downVotes={downVotes}
                 direction='row'
+                fontSize='14px'
               />
               <Flex ml={2} flexWrap='wrap'>
                 {ACTION_BUTTONS.map((btn) => (
