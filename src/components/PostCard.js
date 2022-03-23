@@ -8,7 +8,6 @@ import {
   Icon,
   IconButton,
   Link,
-  Stack,
   Text,
   useColorModeValue,
   useMediaQuery,
@@ -19,8 +18,7 @@ import { BiShare } from 'react-icons/bi';
 import { BsArrowsAngleExpand, BsBookmark, BsCardText } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
 import { getElapsedTimeAsString } from '../utils/date';
-import UpVoteButton from './buttons/UpVoteButton';
-import DownVoteButton from './buttons/DownVoteButton';
+import VotingButtons from './buttons/VotingButtons';
 
 const ActionButton = ({ ariaLabel, icon, text, ...rest }) => (
   <Button
@@ -32,20 +30,6 @@ const ActionButton = ({ ariaLabel, icon, text, ...rest }) => (
   >
     <Text fontSize='xs'>{text}</Text>
   </Button>
-);
-
-const VotingButtons = ({ upVotes, downVotes, ...rest }) => (
-  <Stack
-    alignItems='center'
-    justifyContent='center'
-    lineHeight={0}
-    direction={{ base: 'row', lg: 'column' }}
-    {...rest}
-  >
-    <UpVoteButton />
-    <Text fontWeight='bold'>{upVotes - downVotes}</Text>
-    <DownVoteButton />
-  </Stack>
 );
 
 const ExpandButton = ({ ...rest }) => (
@@ -170,7 +154,11 @@ const PostCard = ({
             />
 
             <Flex>
-              <VotingButtons upVotes={upVotes} downVotes={downVotes} />
+              <VotingButtons
+                upVotes={upVotes}
+                downVotes={downVotes}
+                direction='row'
+              />
               <Flex ml={2} flexWrap='wrap'>
                 {ACTION_BUTTONS.map((btn) => (
                   <ActionButton
