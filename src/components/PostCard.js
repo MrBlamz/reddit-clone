@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Center,
   Divider,
   Flex,
@@ -19,18 +18,7 @@ import { BsArrowsAngleExpand, BsBookmark, BsCardText } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
 import { getElapsedTimeAsString } from '../utils/date';
 import VotingButtons from './buttons/VotingButtons';
-
-const ActionButton = ({ ariaLabel, icon, text, ...rest }) => (
-  <Button
-    variant='action'
-    aria-label={ariaLabel}
-    leftIcon={icon}
-    fontSize='xl'
-    {...rest}
-  >
-    <Text fontSize='xs'>{text}</Text>
-  </Button>
-);
+import ActionButton from './buttons/ActionButton';
 
 const ExpandButton = ({ ...rest }) => (
   <IconButton
