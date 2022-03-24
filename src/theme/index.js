@@ -3,6 +3,7 @@ import styles from './styles';
 import colors from './colors';
 import Button from './components/button';
 import Link from './components/link';
+import Textarea from './components/textarea';
 
 const config = { initialColorMode: 'light', useSystemColorMode: true };
 
@@ -13,6 +14,7 @@ const overrides = {
   components: {
     Button,
     Link,
+    Textarea,
   },
 };
 
