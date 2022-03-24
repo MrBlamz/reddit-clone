@@ -2,7 +2,11 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { isLoggedIn: false },
+  initialState: {
+    isLoggedIn: false,
+    user: null,
+    userData: {},
+  },
   reducers: {
     fetchUserFromLocalStorage: (state, action) => {
       state.user = action.payload.user;
