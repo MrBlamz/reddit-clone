@@ -17,6 +17,9 @@ const Button = {
           whiten('brand.secondary', 15),
           darken('brand.light', 15)
         )(props),
+        _disabled: {
+          bg: mode('brand.secondary', 'brand.light')(props),
+        },
       },
     }),
     secondary: (props) => ({
@@ -24,6 +27,9 @@ const Button = {
       color: mode('brand.secondary', 'brand.light')(props),
       _hover: {
         bg: mode(darken('brand.light', 5), whiten('brand.dark', 10))(props),
+      },
+      _disabled: {
+        bg: mode('brand.light', 'brand.dark')(props),
       },
     }),
     transparent: (props) => ({
@@ -33,6 +39,10 @@ const Button = {
       color: mode('brand.secondary', 'brand.light')(props),
       _hover: {
         borderColor: mode('brand.borderLight', 'brand.borderDark')(props),
+      },
+      _disabled: {
+        bg: mode('brand.light', 'brand.dark')(props),
+        border: 'none',
       },
     }),
     action: (props) => ({
