@@ -1,4 +1,4 @@
-import { Container } from '@chakra-ui/react';
+import Container from '../components/containers/Container';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingPostCard from '../components/LoadingPostCard';
@@ -52,11 +52,7 @@ const Community = () => {
     fetchPosts();
   }, [communityName]);
 
-  return (
-    <Container maxW='full' padding={{ base: 2, md: '20px 24px' }}>
-      {isLoading ? loadingPostCards : postCards}
-    </Container>
-  );
+  return <Container>{isLoading ? loadingPostCards : postCards}</Container>;
 };
 
 export default Community;

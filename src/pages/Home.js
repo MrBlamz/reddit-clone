@@ -1,4 +1,4 @@
-import { Container } from '@chakra-ui/react';
+import Container from '../components/containers/Container';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -51,9 +51,7 @@ const Home = () => {
 
   return (
     <>
-      <Container maxW='full' padding={{ base: 2, md: '20px 24px' }}>
-        {isLoading ? loadingCards : postCards}
-      </Container>
+      <Container>{isLoading ? loadingCards : postCards}</Container>
     </>
   );
 };
