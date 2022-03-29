@@ -10,7 +10,7 @@ import placeholderAvatar from '../assets/avatar/avatar.png';
 import { getElapsedTimeAsString } from '../utils/date';
 import VotingButtons from './buttons/VotingButtons';
 
-const Comment = ({ author, content, upVotes, downVotes, timestamp }) => {
+const Comment = ({ author, content, votes, timestamp }) => {
   const textColor = useColorModeValue('brand.iconLight', 'brand.iconDark');
 
   return (
@@ -23,8 +23,7 @@ const Comment = ({ author, content, upVotes, downVotes, timestamp }) => {
       position='relative'
     >
       <VotingButtons
-        downVotes={downVotes}
-        upVotes={upVotes}
+        votes={votes}
         direction='column'
         position='absolute'
         top={2}

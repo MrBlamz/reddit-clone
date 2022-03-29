@@ -41,8 +41,7 @@ const Home = () => {
       title={post.title}
       author={post.author}
       commentsNumber={post.commentsNumber}
-      upVotes={post.upVotes}
-      downVotes={post.downVotes}
+      votes={post.votes}
       timestamp={post.timestamp}
       isLast={i === posts.length - 1}
       onClick={handleClick(post.communityName, post.id)}

@@ -75,15 +75,7 @@ const Buttons = ({ commentsNumber, children }) => (
   </Flex>
 );
 
-const Post = ({
-  title,
-  content,
-  author,
-  downVotes,
-  upVotes,
-  commentsNumber,
-  timestamp,
-}) => {
+const Post = ({ title, content, author, votes, commentsNumber, timestamp }) => {
   const [isMobile] = useMediaQuery('(max-width: 48rem)');
 
   return isMobile ? (
@@ -91,20 +83,14 @@ const Post = ({
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
       <Buttons commentsNumber={commentsNumber}>
-        <VotingButtons
-          fontSize='14px'
-          downVotes={downVotes}
-          upVotes={upVotes}
-          direction='row'
-        />
+        <VotingButtons fontSize='14px' votes={votes} direction='row' />
       </Buttons>
     </Container>
   ) : (
     <Container position='relative'>
       <VotingButtons
         fontSize='14px'
-        downVotes={downVotes}
-        upVotes={upVotes}
+        votes={votes}
         justifyContent='flex-start'
         position='absolute'
         top={2}

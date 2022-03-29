@@ -79,8 +79,7 @@ const PostCard = ({
   author,
   commentsNumber,
   communityName,
-  upVotes,
-  downVotes,
+  votes,
   timestamp,
   isFirst,
   isLast,
@@ -142,12 +141,7 @@ const PostCard = ({
             />
 
             <Flex>
-              <VotingButtons
-                upVotes={upVotes}
-                downVotes={downVotes}
-                direction='row'
-                fontSize='14px'
-              />
+              <VotingButtons votes={votes} direction='row' fontSize='14px' />
               <Flex ml={2} flexWrap='wrap'>
                 {ACTION_BUTTONS.map((btn) => (
                   <ActionButton
@@ -173,7 +167,7 @@ const PostCard = ({
       ) : (
         <>
           <Flex p={2}>
-            <VotingButtons upVotes={upVotes} downVotes={downVotes} />
+            <VotingButtons votes={votes} />
             <DocumentIcon />
           </Flex>
           <Box>
