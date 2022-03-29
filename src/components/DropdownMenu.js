@@ -16,6 +16,10 @@ const DropdownMenu = ({ description, onClick, options = [] }) => {
   const isSelected = (item) => item === selected;
 
   const handleClick = (event) => {
+    const nodeName = event.target.nodeName;
+
+    if (nodeName !== 'BUTTON') return;
+
     setSelected(event.target.textContent);
     onClick(event);
   };
@@ -39,6 +43,7 @@ const DropdownMenu = ({ description, onClick, options = [] }) => {
         bg={useColorModeValue('brand.light', 'brand.dark')}
         fontSize='14px'
         onClick={handleClick}
+        pointerEvents='none'
       >
         {Array.isArray(options) &&
           options.map((option) => (
@@ -46,6 +51,7 @@ const DropdownMenu = ({ description, onClick, options = [] }) => {
               key={option}
               fontWeight={isSelected(option) && 'bold'}
               color={isSelected(option) && color}
+              pointerEvents='all'
             >
               {option}
             </MenuItem>
