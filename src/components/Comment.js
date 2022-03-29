@@ -30,7 +30,7 @@ const Comment = ({ author, content, upVotes, downVotes, timestamp }) => {
         top={2}
         left={2}
       />
-      <VStack alignItems='flex-start' spacing={3}>
+      <VStack minH={90} alignItems='flex-start' spacing={3}>
         <HStack fontSize='xs'>
           <Avatar size='sm' src={placeholderAvatar} />
           <Text fontWeight='bold'>{author}</Text>
