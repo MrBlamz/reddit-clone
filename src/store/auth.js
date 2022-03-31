@@ -41,4 +41,9 @@ export const selectUsername = createSelector(
   (auth) => auth.userData.username
 );
 
+export const selectUserId = createSelector(
+  (state) => state.auth,
+  (auth) => auth.user?.uid
+);
+
 export default authSlice.reducer;
