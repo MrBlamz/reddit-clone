@@ -46,7 +46,11 @@ const Header = ({ title, author, timestamp }) => (
   </VStack>
 );
 
-const Content = ({ children }) => <Text lineHeight={1.4}>{children}</Text>;
+const Content = ({ children }) => (
+  <Text whiteSpace='pre-line' lineHeight={1.4}>
+    {children}
+  </Text>
+);
 
 const Buttons = ({ commentsNumber, children }) => (
   <Flex w='full'>
