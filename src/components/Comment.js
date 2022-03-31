@@ -35,7 +35,7 @@ const Comment = ({ author, content, votes, timestamp }) => {
           <Text fontWeight='bold'>{author}</Text>
           <Text color={textColor}>{getElapsedTimeAsString(timestamp)}</Text>
         </HStack>
-        <Text lineHeight={1.4} fontSize='1rem'>
+        <Text whiteSpace='pre-line' lineHeight={1.4} fontSize='1rem'>
           {content}
         </Text>
       </VStack>
