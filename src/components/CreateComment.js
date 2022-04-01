@@ -3,21 +3,37 @@ import {
   Button,
   HStack,
   Text,
-  Textarea,
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { selectAuthStatus, selectUsername } from '../store/auth';
+import { selectAuthStatus, selectUserId, selectUsername } from '../store/auth';
+import { createComment } from '../utils/firebase/firestore';
+import AutoResizeTextArea from './AutoResizeTextArea';
 
-const CreateComment = () => {
+const CreateComment = ({ postId }) => {
   const [inputValue, setInputValue] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const isLoggedIn = useSelector(selectAuthStatus);
+  const userId = useSelector(selectUserId);
   const username = useSelector(selectUsername);
   const usernameColor = useColorModeValue('brand.secondary', 'brand.primary');
 
   const handleInputChange = (event) => setInputValue(event.target.value);
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    try {
+      await createComment(inputValue, username, userId, postId);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setInputValue('');
+    setIsSubmitting(false);
+  };
 
   return (
     <Box>
@@ -40,10 +56,10 @@ const CreateComment = () => {
         cursor={!isLoggedIn && 'not-allowed'}
         opacity={!isLoggedIn && 0.7}
       >
-        <Textarea
-          h={24}
+        <AutoResizeTextArea
+          minH={24}
+          whiteSpace='pre-wrap'
           variant='noBorder'
-          resize='none'
           disabled={!isLoggedIn}
           cursor={!isLoggedIn && 'not-allowed'}
           placeholder={
@@ -58,6 +74,7 @@ const CreateComment = () => {
           value={inputValue}
           onChange={handleInputChange}
         />
+
         <Box
           bg={useColorModeValue('brand.light', 'brand.dark')}
           w='full'
@@ -70,6 +87,8 @@ const CreateComment = () => {
             h='35px'
             fontSize='14px'
             alignSelf='flex-end'
+            isLoading={isSubmitting}
+            onClick={handleSubmit}
           >
             Comment
           </Button>
