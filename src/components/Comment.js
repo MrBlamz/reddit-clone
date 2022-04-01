@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Flex,
   HStack,
   Text,
   useColorModeValue,
@@ -10,8 +11,8 @@ import placeholderAvatar from '../assets/avatar/avatar.png';
 import { getElapsedTimeAsString } from '../utils/date';
 import VotingButtons from './buttons/VotingButtons';
 
-const Comment = ({ author, content, votes, timestamp }) => {
-  const textColor = useColorModeValue('brand.iconLight', 'brand.iconDark');
+const Comment = ({ author, content, votes, timestamp, isPostAuthor }) => {
+  const textColor = useColorModeValue('brand.secondary', 'brand.primary');
 
   return (
     <Box
@@ -32,8 +33,17 @@ const Comment = ({ author, content, votes, timestamp }) => {
       <VStack minH={90} alignItems='flex-start' spacing={3}>
         <HStack fontSize='xs'>
           <Avatar size='sm' src={placeholderAvatar} />
-          <Text fontWeight='bold'>{author}</Text>
-          <Text color={textColor}>{getElapsedTimeAsString(timestamp)}</Text>
+          <Flex fontWeight='bold'>
+            <Text>{author}</Text>
+            {isPostAuthor && (
+              <Text color={textColor} ml={1}>
+                OP
+              </Text>
+            )}
+          </Flex>
+          <Text color={useColorModeValue('brand.iconLight', 'brand.iconDark')}>
+            {getElapsedTimeAsString(timestamp)}
+          </Text>
         </HStack>
         <Text whiteSpace='pre-line' lineHeight={1.4} fontSize='1rem'>
           {content}
