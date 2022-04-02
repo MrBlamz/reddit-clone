@@ -12,7 +12,7 @@ import { selectAuthStatus, selectUserId, selectUsername } from '../store/auth';
 import { createComment } from '../utils/firebase/firestore';
 import AutoResizeTextArea from './AutoResizeTextArea';
 
-const CreateComment = ({ postId }) => {
+const CreateComment = ({ postId, onSubmit }) => {
   const [inputValue, setInputValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isLoggedIn = useSelector(selectAuthStatus);
@@ -26,7 +26,13 @@ const CreateComment = ({ postId }) => {
     setIsSubmitting(true);
 
     try {
-      await createComment(inputValue, username, userId, postId);
+      const newComment = await createComment(
+        inputValue,
+        username,
+        userId,
+        postId
+      );
+      if (onSubmit) onSubmit(newComment);
     } catch (error) {
       console.log(error);
     }
