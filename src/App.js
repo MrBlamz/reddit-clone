@@ -1,11 +1,12 @@
 import { Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
 import { useEffect } from 'react';
-import AuthenticationModal from './components/AuthenticationModal';
-import Community from './pages/Community';
-import CommunityLayout from './layouts/CommunityLayout';
 import useUser from './hooks/useUser';
+import Navbar from './components/Navbar';
+import AuthenticationModal from './components/AuthenticationModal';
+import CommunityLayout from './layouts/CommunityLayout';
+import Home from './pages/Home';
+import Community from './pages/Community';
+import Post from './pages/Post';
 
 function App() {
   const { fetchUserFromLocalStorage, listenForAuthChanges } = useUser();
@@ -26,6 +27,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='r/:communityName' element={<CommunityLayout />}>
           <Route index element={<Community />} />
+          <Route path=':postId' element={<Post />} />
         </Route>
       </Routes>
       <AuthenticationModal />
