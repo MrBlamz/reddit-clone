@@ -6,12 +6,11 @@ import {
   MenuList,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React from 'react';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
-const DropdownMenu = ({ description, onClick, options = [] }) => {
+const DropdownMenu = ({ description, onClick, options = [], selected }) => {
   const color = useColorModeValue('brand.secondary', 'brand.primary');
-  const [selected, setSelected] = useState(options[0]);
 
   const isSelected = (item) => item === selected;
 
@@ -20,7 +19,6 @@ const DropdownMenu = ({ description, onClick, options = [] }) => {
 
     if (nodeName !== 'BUTTON') return;
 
-    setSelected(event.target.textContent);
     onClick(event);
   };
 
