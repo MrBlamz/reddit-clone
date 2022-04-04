@@ -4,6 +4,7 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  orderBy,
   query,
   setDoc,
   where,
@@ -12,34 +13,38 @@ import app from '../../firebase.config';
 
 export const db = getFirestore(app);
 
-export const checkIfUsernameIsAvailable = async (username) => {
-  const querySnapshot = await getDocs(collection(db, 'usernames'));
-  const sanitizedUsername = username.toLowerCase();
-
-  let isAvailable = true;
-
-  for (const i in querySnapshot.docs) {
-    const doc = querySnapshot.docs[i];
-
-    if (doc.id === sanitizedUsername) {
-      isAvailable = false;
-    }
-  }
-
-  return isAvailable;
+const getDocumentFromCollection = async (collectionName, docId) => {
+  const docRef = doc(db, collectionName, docId);
+  return await getDoc(docRef);
 };
 
-export const writeUsernameInDb = (username, userId) => {
+const getCollection = async (collectionName) => {
+  const querySnapshot = await getDocs(collection(db, collectionName));
+  return querySnapshot.docs.map((doc) => doc.data());
+};
+
+const getDocumentsFromCollectionByConstraints = async (
+  collectionName,
+  ...constraints
+) => {
+  const q = query(collection(db, collectionName), ...constraints);
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => doc.data());
+};
+
+const createDocument = (collectionName) => doc(collection(db, collectionName));
+
+// Fetching from db functions
+
+export const checkIfUsernameIsAvailable = async (username) => {
   const sanitizedUsername = username.toLowerCase();
-  return Promise.all([
-    setDoc(doc(db, 'usernames', sanitizedUsername), { userId }),
-    setDoc(doc(db, 'users', userId), { username: username }),
-  ]);
+  const querySnapshot = await getDocs(collection(db, 'usernames'));
+
+  return querySnapshot.docs.every((doc) => doc.id !== sanitizedUsername);
 };
 
 export const fetchUsername = async (userId) => {
-  const docRef = doc(db, 'users', userId);
-  const docSnapshot = await getDoc(docRef);
+  const docSnapshot = await getDocumentFromCollection('users', userId);
 
   if (docSnapshot.exists()) {
     return docSnapshot.data().username;
@@ -49,48 +54,69 @@ export const fetchUsername = async (userId) => {
 };
 
 export const fetchUserData = async (userId) => {
-  const docRef = doc(db, 'users', userId);
-  const docSnapshot = await getDoc(docRef);
+  const docSnapshot = await getDocumentFromCollection('users', userId);
 
   return docSnapshot.exists() ? docSnapshot.data() : {};
 };
 
-export const fetchPosts = async () => {
-  const posts = [];
-  const querySnapshot = await getDocs(collection(db, 'posts'));
-  querySnapshot.forEach((doc) => posts.push(doc.data()));
-  return posts;
-};
+export const fetchPosts = () => getCollection('posts');
 
 export const fetchPost = async (postId) => {
-  const docRef = doc(db, 'posts', postId);
-  const docSnapshot = await getDoc(docRef);
+  const docSnapshot = await getDocumentFromCollection('posts', postId);
 
   return docSnapshot.exists() ? docSnapshot.data() : {};
 };
 
-export const fetchPostComments = async (postId) => {
-  const comments = [];
-  const q = query(collection(db, 'comments'), where('postId', '==', postId));
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => comments.push(doc.data()));
-  return comments;
+export const fetchPostComments = (postId) =>
+  getDocumentsFromCollectionByConstraints(
+    'comments',
+    where('postId', '==', postId)
+  );
+
+export const fetchPostComment = async (commentId) => {
+  const docSnapshot = await getDocumentFromCollection('comments', commentId);
+
+  if (docSnapshot.exists()) {
+    return docSnapshot.data();
+  }
+
+  throw new Error('Comment not found!');
 };
 
-export const fetchCommunityPosts = async (communityName) => {
-  const posts = [];
-  const q = query(
-    collection(db, 'posts'),
+export const fetchOrderedCommentsByPostTime = (postId, options) =>
+  getDocumentsFromCollectionByConstraints(
+    'comments',
+    where('postId', '==', postId),
+    orderBy('timestamp', options)
+  );
+
+export const fetchOrderedCommentsByVoteNumber = (postId) =>
+  getDocumentsFromCollectionByConstraints(
+    'comments',
+    where('postId', '==', postId),
+    orderBy('votes', 'desc'),
+    orderBy('timestamp', 'desc')
+  );
+
+export const fetchCommunityPosts = (communityName) =>
+  getDocumentsFromCollectionByConstraints(
+    'posts',
     where('communityName', '==', communityName)
   );
-  const querySnapshot = await getDocs(q);
-  querySnapshot.forEach((doc) => posts.push(doc.data()));
-  return posts;
+
+// Posting to db functions
+
+export const writeUsernameInDb = (username, userId) => {
+  const sanitizedUsername = username.toLowerCase();
+  return Promise.all([
+    setDoc(doc(db, 'usernames', sanitizedUsername), { userId }),
+    setDoc(doc(db, 'users', userId), { username: username }),
+  ]);
 };
 
 export const createCommunity = (name, description) => {
-  const docRef = doc(collection(db, 'communities'));
-  const sanitizedUsername = name.toLowerCase();
+  const docRef = createDocument('communities');
+  const sanitizedUsername = name.trim();
 
   const newCommunity = {
     name: sanitizedUsername,
@@ -98,7 +124,7 @@ export const createCommunity = (name, description) => {
     id: docRef.id,
   };
 
-  setDoc(docRef, newCommunity);
+  return setDoc(docRef, newCommunity);
 };
 
 export const createPost = (
@@ -109,15 +135,14 @@ export const createPost = (
   communityId,
   communityName
 ) => {
-  const docRef = doc(collection(db, 'posts'));
+  const docRef = createDocument('posts');
 
   const newPost = {
     title,
     content,
     author,
     communityName,
-    upVotes: 0,
-    downVotes: 0,
+    votes: 0,
     commentsNumber: 0,
     userId,
     communityId,
@@ -125,5 +150,23 @@ export const createPost = (
     timestamp: Date.now(),
   };
 
-  setDoc(docRef, newPost);
+  return setDoc(docRef, newPost);
+};
+
+export const createComment = async (content, author, userId, postId) => {
+  const docRef = createDocument('comments');
+
+  const newComment = {
+    author,
+    content,
+    userId,
+    postId,
+    votes: 0,
+    timestamp: Date.now(),
+    id: docRef.id,
+  };
+
+  await setDoc(docRef, newComment);
+
+  return newComment;
 };
