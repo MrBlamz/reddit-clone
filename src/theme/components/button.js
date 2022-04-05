@@ -12,6 +12,7 @@ const Button = {
     primary: (props) => ({
       bg: mode('brand.secondary', 'brand.light')(props),
       color: mode('brand.light', 'brand.dark')(props),
+      borderColor: mode('brand.secondary', 'brand.light')(props),
       _hover: {
         bg: mode(
           whiten('brand.secondary', 15),
