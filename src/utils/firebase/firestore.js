@@ -59,6 +59,13 @@ export const fetchUserData = async (userId) => {
   return docSnapshot.exists() ? docSnapshot.data() : {};
 };
 
+export const checkIfCommunityExists = async (communityName) => {
+  const sanitizedCommunityName = communityName.toLowerCase().trim();
+  const querySnapshot = await getDocs(collection(db, 'communityNames'));
+
+  return querySnapshot.docs.some((doc) => doc.id === sanitizedCommunityName);
+};
+
 export const fetchPosts = () => getCollection('posts');
 
 export const fetchPost = async (postId) => {
@@ -114,17 +121,19 @@ export const writeUsernameInDb = (username, userId) => {
   ]);
 };
 
-export const createCommunity = (name, description) => {
+export const createCommunity = async (name) => {
   const docRef = createDocument('communities');
-  const sanitizedUsername = name.trim();
+  const sanitizedCommunityName = name.toLowerCase().trim();
 
   const newCommunity = {
-    name: sanitizedUsername,
-    description,
+    name,
     id: docRef.id,
   };
 
-  return setDoc(docRef, newCommunity);
+  return Promise.all([
+    setDoc(docRef, newCommunity),
+    setDoc(doc(db, 'communityNames', sanitizedCommunityName), newCommunity),
+  ]);
 };
 
 export const createPost = (
