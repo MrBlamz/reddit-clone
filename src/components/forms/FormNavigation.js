@@ -5,6 +5,7 @@ const FormNavigation = ({
   onBackClick,
   isSubmitting,
   isLastStep,
+  submitButtonText,
 }) => {
   return (
     <HStack mt={3}>
@@ -14,7 +15,11 @@ const FormNavigation = ({
         </Button>
       )}
       <Button type='submit' variant='primary' w='full' isLoading={isSubmitting}>
-        {isLastStep ? 'Submit' : 'Next'}
+        {isLastStep && submitButtonText
+          ? submitButtonText
+          : isLastStep
+          ? 'Submit'
+          : 'Next'}
       </Button>
     </HStack>
   );

@@ -8,6 +8,7 @@ const MultiStepForm = ({
   onSubmit,
   validateOnChange = true,
   validateOnBlur = true,
+  submitButtonText,
 }) => {
   const [stepNumber, setStepNumber] = useState(0);
   const steps = React.Children.toArray(children);
@@ -56,6 +57,7 @@ const MultiStepForm = ({
             hasPrevious={stepNumber > 0}
             onBackClick={() => previousStep(formik.values)}
             isSubmitting={formik.isSubmitting}
+            submitButtonText={submitButtonText}
           />
         </Form>
       )}
