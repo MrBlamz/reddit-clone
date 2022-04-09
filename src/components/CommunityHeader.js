@@ -18,7 +18,9 @@ const CommunityHeader = ({ communityName }) => {
         mx={{ base: 3, md: 72 }}
         fontSize={{ base: 20, md: 22 }}
         color='white'
-      >{`r/${communityName}`}</Heading>
+      >
+        {communityName}
+      </Heading>
     </Box>
   );
 };
