@@ -5,6 +5,9 @@ const initialState = {
     isOpen: false,
     isLogin: true,
   },
+  createCommunityModal: {
+    isOpen: false,
+  },
 };
 
 const uiSlice = createSlice({
@@ -29,6 +32,14 @@ const uiSlice = createSlice({
     closeAuthenticationModal: (state) => {
       state.authenticationModal.isOpen = false;
     },
+
+    openCreateCommunityModal: (state) => {
+      state.createCommunityModal.isOpen = true;
+    },
+
+    closeCreateCommunityModal: (state) => {
+      state.createCommunityModal.isOpen = false;
+    },
   },
 });
 
@@ -37,9 +48,11 @@ const actions = uiSlice.actions;
 // Action Creators
 export const {
   changeAuthenticationModalMode,
+  closeAuthenticationModal,
   openLoginModal,
   openSignUpModal,
-  closeAuthenticationModal,
+  openCreateCommunityModal,
+  closeCreateCommunityModal,
 } = actions;
 
 // Selectors
@@ -51,6 +64,11 @@ export const selectAuthenticationModalMode = createSelector(
 export const selectAuthenticationModalStatus = createSelector(
   (state) => state.ui.authenticationModal,
   (authenticationModal) => authenticationModal.isOpen
+);
+
+export const selectCreateCommunityModalStatus = createSelector(
+  (state) => state.ui.createCommunityModal,
+  (createCommunityModal) => createCommunityModal.isOpen
 );
 
 export default uiSlice.reducer;
