@@ -9,13 +9,13 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
-  Tooltip,
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
 import useModal from '../hooks/useModal';
 import { IoInformationCircleOutline } from 'react-icons/io5';
 import NewCommunityForm from './NewCommunityForm';
+import TouchFriendlyTooltip from './TouchFriendlyTooltip';
 
 const CreateCommunityModal = () => {
   const ref = useRef();
@@ -49,8 +49,10 @@ const CreateCommunityModal = () => {
               <Text>
                 Community names including capitalization cannot be changed.
               </Text>
-              <Tooltip
-                label='Names cannot have spaces (e.g., "r/bookclub" not "r/book club"), must be between 3-21 characters, and underscores ("_") are the only special characters allowed. Avoid using solely trademarked names (e.g., "r/FansOfAcme" not "r/Acme").'
+              <TouchFriendlyTooltip
+                label={
+                  'Names cannot have spaces (e.g., "r/bookclub" not "r/book club"), must be between 3-21 characters, and underscores ("_") are the only special characters allowed. Avoid using solely trademarked names (e.g., "r/FansOfAcme" not "r/Acme").'
+                }
                 fontSize={12}
                 fontWeight='bold'
                 bg='#000'
@@ -58,10 +60,8 @@ const CreateCommunityModal = () => {
                 w={200}
                 textAlign='center'
               >
-                <span>
-                  <IoInformationCircleOutline size={16} />
-                </span>
-              </Tooltip>
+                <IoInformationCircleOutline size={16} />
+              </TouchFriendlyTooltip>
             </HStack>
           </VStack>
 
