@@ -1,13 +1,13 @@
 import Container from '../components/containers/Container';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
 import { fetchCommunityPosts } from '../utils/firebase/firestore';
 
 const Community = () => {
   const navigate = useNavigate();
-  const { communityName } = useParams();
+  const { communityId } = useOutletContext();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,7 +39,7 @@ const Community = () => {
       setIsLoading(true);
 
       try {
-        const data = await fetchCommunityPosts(communityName);
+        const data = await fetchCommunityPosts(communityId);
         setPosts(data);
       } catch (error) {
         console.log(error);
@@ -49,7 +49,7 @@ const Community = () => {
     };
 
     fetchPosts();
-  }, [communityName]);
+  }, [communityId]);
 
   return <Container>{isLoading ? loadingPostCards : postCards}</Container>;
 };

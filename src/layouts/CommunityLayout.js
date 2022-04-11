@@ -9,16 +9,18 @@ import Community404 from '../pages/Community404';
 const CommunityLayout = () => {
   const { communityName } = useParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [isCommunity, setIsCommunity] = useState(null);
+  const [communityData, setCommunityData] = useState(null);
 
   useEffect(() => {
     const verifyIfCommunityExists = async () => {
       setIsLoading(true);
 
       try {
-        const communityExists = await checkIfCommunityExists(communityName);
+        const data = await checkIfCommunityExists(communityName);
 
-        setIsCommunity(communityExists);
+        if (data) {
+          setCommunityData(data);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -44,10 +46,10 @@ const CommunityLayout = () => {
     );
   }
 
-  return isCommunity ? (
+  return communityData ? (
     <>
-      <CommunityHeader communityName={communityName} />
-      <Outlet />
+      <CommunityHeader communityName={communityData.name} />
+      <Outlet context={{ communityId: communityData.id }} />
     </>
   ) : (
     <Community404 />
