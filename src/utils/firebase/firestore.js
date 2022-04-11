@@ -61,9 +61,12 @@ export const fetchUserData = async (userId) => {
 
 export const checkIfCommunityExists = async (communityName) => {
   const sanitizedCommunityName = communityName.toLowerCase().trim();
-  const querySnapshot = await getDocs(collection(db, 'communityNames'));
+  const docSnapshot = await getDocumentFromCollection(
+    'communityNames',
+    sanitizedCommunityName
+  );
 
-  return querySnapshot.docs.some((doc) => doc.id === sanitizedCommunityName);
+  return docSnapshot.exists() ? docSnapshot.data() : null;
 };
 
 export const fetchPosts = () => getCollection('posts');
@@ -105,10 +108,10 @@ export const fetchOrderedCommentsByVoteNumber = (postId) =>
     orderBy('timestamp', 'desc')
   );
 
-export const fetchCommunityPosts = (communityName) =>
+export const fetchCommunityPosts = (communityId) =>
   getDocumentsFromCollectionByConstraints(
     'posts',
-    where('communityName', '==', communityName)
+    where('communityId', '==', communityId)
   );
 
 // Posting to db functions
