@@ -7,6 +7,7 @@ import CommunityLayout from './layouts/CommunityLayout';
 import Home from './pages/Home';
 import Community from './pages/Community';
 import Post from './pages/Post';
+import CreateCommunityModal from './components/CreateCommunityModal';
 
 function App() {
   const { fetchUserFromLocalStorage, listenForAuthChanges } = useUser();
@@ -31,6 +32,7 @@ function App() {
         </Route>
       </Routes>
       <AuthenticationModal />
+      <CreateCommunityModal />
     </div>
   );
 }

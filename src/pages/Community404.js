@@ -8,8 +8,10 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { DizzyMascotIcon } from '../components/icons';
+import useModal from '../hooks/useModal';
 
 const Community404 = () => {
+  const { onOpen } = useModal('CreateCommunityModal');
   const navigate = useNavigate();
 
   const handleHomeButtonClick = () => navigate('/');
@@ -36,7 +38,7 @@ const Community404 = () => {
           </Text>
         </VStack>
         <HStack spacing={3}>
-          <Button variant='secondary' fontSize={14}>
+          <Button variant='secondary' fontSize={14} onClick={onOpen}>
             Create Community
           </Button>
           <Button variant='primary' onClick={handleHomeButtonClick}>
