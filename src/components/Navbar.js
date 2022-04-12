@@ -15,9 +15,8 @@ import logo from '../assets/logo/logo.svg';
 import brandTextWhite from '../assets/logo/text_white_theme.svg';
 import brandTextDark from '../assets/logo/text_dark_theme.svg';
 import UserMenu from './UserMenu';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectAuthStatus } from '../store/auth';
-import { openLoginModal, openSignUpModal } from '../store/ui';
+import useModal from '../hooks/useModal';
+import useUser from '../hooks/useUser';
 
 const Logo = () => {
   const brandName = useColorModeValue(brandTextWhite, brandTextDark);
@@ -69,8 +68,9 @@ const SearchBar = () => {
 };
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const isLoggedIn = useSelector(selectAuthStatus);
+  const { onOpen: openLoginModal } = useModal('LoginModal');
+  const { onOpen: openSignUpModal } = useModal('SignUpModal');
+  const { isLoggedIn } = useUser();
 
   return (
     <Flex
@@ -103,7 +103,7 @@ const Navbar = () => {
             variant='secondary'
             w='120px'
             h='32px'
-            onClick={() => dispatch(openLoginModal())}
+            onClick={openLoginModal}
           >
             Log In
           </Button>
@@ -111,9 +111,7 @@ const Navbar = () => {
             variant='primary'
             w='120px'
             h='32px'
-            onClick={() => {
-              dispatch(openSignUpModal());
-            }}
+            onClick={openSignUpModal}
           >
             Sign Up
           </Button>
