@@ -21,9 +21,8 @@ import { BiChevronDown } from 'react-icons/bi';
 import { BsMoon, BsSun } from 'react-icons/bs';
 import { FiLogIn } from 'react-icons/fi';
 import { signOut } from '../utils/firebase/auth';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectAuthStatus, selectUsername } from '../store/auth';
-import { openLoginModal } from '../store/ui';
+import useModal from '../hooks/useModal';
+import useUser from '../hooks/useUser';
 
 const Item = ({ onClick, icon, text, ...rest }) => (
   <MenuItem onClick={onClick} {...rest}>
@@ -35,7 +34,7 @@ const Item = ({ onClick, icon, text, ...rest }) => (
 );
 
 const SignedOutMenu = ({ toggleColorMode, colorMode }) => {
-  const dispatch = useDispatch();
+  const { onOpen } = useModal('LoginModal');
 
   return (
     <Menu>
@@ -66,19 +65,17 @@ const SignedOutMenu = ({ toggleColorMode, colorMode }) => {
         </MenuGroup>
         <MenuDivider />
 
-        <Item
-          onClick={() => dispatch(openLoginModal())}
-          icon={FiLogIn}
-          text='Log In / Sign Up'
-        />
+        <Item onClick={onOpen} icon={FiLogIn} text='Log In / Sign Up' />
       </MenuList>
     </Menu>
   );
 };
 
-const SignedInMenu = ({ toggleColorMode, colorMode }) => {
-  const username = useSelector(selectUsername) || 'Redditor';
-
+const SignedInMenu = ({
+  username = 'Redditor',
+  toggleColorMode,
+  colorMode,
+}) => {
   return (
     <Menu>
       <MenuButton
@@ -116,10 +113,14 @@ const SignedInMenu = ({ toggleColorMode, colorMode }) => {
 
 const UserMenu = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const isLoggedIn = useSelector(selectAuthStatus);
+  const { isLoggedIn, username } = useUser();
 
   return isLoggedIn ? (
-    <SignedInMenu colorMode={colorMode} toggleColorMode={toggleColorMode} />
+    <SignedInMenu
+      username={username}
+      colorMode={colorMode}
+      toggleColorMode={toggleColorMode}
+    />
   ) : (
     <SignedOutMenu colorMode={colorMode} toggleColorMode={toggleColorMode} />
   );
