@@ -25,13 +25,7 @@ import Toast from './Toast';
 import SignUpForm from './SignUpForm';
 import { fetchUsername, writeUsernameInDb } from '../utils/firebase/firestore';
 import SignInForm from './SignInForm';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  changeAuthenticationModalMode,
-  closeAuthenticationModal,
-  selectAuthenticationModalMode,
-  selectAuthenticationModalStatus,
-} from '../store/ui';
+import useModal from '../hooks/useModal';
 
 const SuccessfulSignInToast = ({ username = '' }) => (
   <Toast variant='success' text={`Welcome back ${username}`} />
@@ -46,9 +40,9 @@ const FailedAuthenticationToast = ({ error }) => (
 );
 
 const AuthenticationModal = () => {
-  const dispatch = useDispatch();
-  const isLogin = useSelector(selectAuthenticationModalMode);
-  const isOpen = useSelector(selectAuthenticationModalStatus);
+  const { isOpen, isLogin, onClose, changeMode } = useModal(
+    'AuthenticationModal'
+  );
 
   const toast = useToast({
     duration: 3000,
@@ -63,7 +57,7 @@ const AuthenticationModal = () => {
         writeUsernameInDb(username, user.uid);
       })
       .then(() => {
-        dispatch(closeAuthenticationModal());
+        onClose();
 
         toast({
           render: () => <SuccessfulSignUpToast />,
@@ -84,7 +78,7 @@ const AuthenticationModal = () => {
       .then(async ({ user }) => {
         const username = await fetchUsername(user.uid);
 
-        dispatch(closeAuthenticationModal());
+        onClose();
 
         toast({
           render: () => <SuccessfulSignInToast username={username} />,
@@ -105,7 +99,7 @@ const AuthenticationModal = () => {
           result.user.auth.currentUser.metadata;
         const isNewUser = creationTime === lastSignInTime;
 
-        dispatch(closeAuthenticationModal());
+        onClose();
 
         toast({
           render: () =>
@@ -122,7 +116,7 @@ const AuthenticationModal = () => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={() => dispatch(closeAuthenticationModal())}
+      onClose={onClose}
       isCentered
       bg={useColorModeValue('brand.light', 'brand.dark')}
     >
@@ -191,7 +185,7 @@ const AuthenticationModal = () => {
                     variant='primary'
                     fontSize='smaller'
                     fontWeight='bold'
-                    onClick={() => dispatch(changeAuthenticationModalMode())}
+                    onClick={changeMode}
                   >
                     {isLogin ? 'SIGN UP' : 'LOG IN'}
                   </Link>
