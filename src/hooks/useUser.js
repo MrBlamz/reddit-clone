@@ -1,10 +1,18 @@
-import { useDispatch } from 'react-redux';
-import { actions as authActions } from '../store/auth';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  actions as authActions,
+  selectAuthStatus,
+  selectUserId,
+  selectUsername,
+} from '../store/auth';
 import { auth } from '../utils/firebase/auth';
 import { fetchUserData } from '../utils/firebase/firestore';
 
 const useUser = () => {
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector(selectAuthStatus);
+  const username = useSelector(selectUsername);
+  const userId = useSelector(selectUserId);
 
   const fetchUserFromLocalStorage = () => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -37,7 +45,13 @@ const useUser = () => {
     });
   };
 
-  return { fetchUserFromLocalStorage, listenForAuthChanges };
+  return {
+    isLoggedIn,
+    username,
+    userId,
+    fetchUserFromLocalStorage,
+    listenForAuthChanges,
+  };
 };
 
 export default useUser;
