@@ -1,15 +1,18 @@
-import Container from '../components/containers/Container';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import { fetchCommunityPosts } from '../utils/firebase/firestore';
+import { isEmptyArray } from 'formik';
+import Container from '../components/containers/Container';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
-import { fetchCommunityPosts } from '../utils/firebase/firestore';
+import NoPosts from '../components/NoPosts';
 
 const Community = () => {
   const navigate = useNavigate();
   const { communityId } = useOutletContext();
-  const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const hasNoPosts = isEmptyArray(posts);
 
   const handlePostClick = (postId) => (event) => {
     navigate(`./${postId}`);
@@ -51,7 +54,11 @@ const Community = () => {
     fetchPosts();
   }, [communityId]);
 
-  return <Container>{isLoading ? loadingPostCards : postCards}</Container>;
+  return (
+    <Container>
+      {isLoading ? loadingPostCards : hasNoPosts ? <NoPosts /> : postCards}
+    </Container>
+  );
 };
 
 export default Community;
