@@ -7,17 +7,14 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selectAuthStatus, selectUserId, selectUsername } from '../store/auth';
+import useUser from '../hooks/useUser';
 import { createComment } from '../utils/firebase/firestore';
 import AutoResizeTextArea from './AutoResizeTextArea';
 
 const CreateComment = ({ postId, onSubmit }) => {
+  const { isLoggedIn, userId, username } = useUser();
   const [inputValue, setInputValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isLoggedIn = useSelector(selectAuthStatus);
-  const userId = useSelector(selectUserId);
-  const username = useSelector(selectUsername);
   const usernameColor = useColorModeValue('brand.secondary', 'brand.primary');
 
   const handleInputChange = (event) => setInputValue(event.target.value);
