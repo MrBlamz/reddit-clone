@@ -139,7 +139,7 @@ export const createCommunity = async (name) => {
   ]);
 };
 
-export const createPost = (
+export const createPost = async (
   title,
   userId,
   author,
@@ -162,7 +162,9 @@ export const createPost = (
     timestamp: Date.now(),
   };
 
-  return setDoc(docRef, newPost);
+  await setDoc(docRef, newPost);
+
+  return docRef.id;
 };
 
 export const createComment = async (content, author, userId, postId) => {
