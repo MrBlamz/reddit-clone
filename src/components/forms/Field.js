@@ -2,19 +2,19 @@ import { FormControl, FormErrorMessage, FormLabel } from '@chakra-ui/react';
 import { useField } from 'formik';
 import React from 'react';
 
-const Field = ({ label, hidden, ...props }) => {
-  const [field, meta] = useField(props);
+const Field = ({ name, label, hidden, ...props }) => {
+  const [field, meta] = useField(name);
 
   const childrenWithProps = React.Children.map(props.children, (child) => {
     if (React.isValidElement(child)) {
-      return React.cloneElement(child, { ...field });
+      return React.cloneElement(child, { ...field, id: name });
     }
     return child;
   });
 
   return (
     <FormControl isInvalid={meta.touched && meta.error}>
-      <FormLabel htmlFor={props.name} hidden={hidden}>
+      <FormLabel htmlFor={name} hidden={hidden}>
         {label}
       </FormLabel>
 
