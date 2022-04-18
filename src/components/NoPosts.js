@@ -1,6 +1,11 @@
 import { Button, Center, Flex, Heading, VStack } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const NoPosts = () => {
+  const navigate = useNavigate();
+
+  const handleClick = () => navigate('submit');
+
   return (
     <Center
       position='absolute'
@@ -18,7 +23,7 @@ const NoPosts = () => {
             Be the first to till this fertile land.
           </Heading>
         </VStack>
-        <Button variant='primary' w={200} mt={4}>
+        <Button variant='primary' w={200} mt={4} onClick={handleClick}>
           Add a post
         </Button>
       </Flex>
