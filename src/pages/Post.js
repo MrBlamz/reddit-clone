@@ -14,6 +14,20 @@ import DropdownMenu from '../components/DropdownMenu';
 import NoComments from '../components/NoComments';
 import LoadingPost from '../components/LoadingPost';
 import LoadingComment from '../components/LoadingComment';
+import PostNotFound from '../components/PostNotFound';
+
+const CommentsSection = ({ children }) => (
+  <Stack
+    borderRadius={5}
+    bg={useColorModeValue('brand.light', 'brand.dark')}
+    spacing={4}
+    px={{ base: 2, md: 12 }}
+    py={{ base: 2, md: 6 }}
+    mt={4}
+  >
+    {children}
+  </Stack>
+);
 
 const Post = () => {
   const { postId } = useParams();
@@ -89,6 +103,8 @@ const Post = () => {
     fetchCommentsData();
   }, [fetchCommentsData]);
 
+  if (!isLoadingPost && !post) return <PostNotFound />;
+
   return (
     <Box w='full' py={3} px={{ base: 3, xl: 80 }}>
       {isLoadingPost ? (
@@ -104,14 +120,7 @@ const Post = () => {
         />
       )}
 
-      <Stack
-        borderRadius={5}
-        bg={useColorModeValue('brand.light', 'brand.dark')}
-        spacing={4}
-        px={{ base: 2, md: 12 }}
-        py={{ base: 2, md: 6 }}
-        mt={4}
-      >
+      <CommentsSection>
         <CreateComment postId={postId} onSubmit={handleCommentSubmit} />
 
         <Flex direction='column'>
@@ -141,7 +150,7 @@ const Post = () => {
           ))}
 
         {!isLoadingComments && hasNoComments && <NoComments />}
-      </Stack>
+      </CommentsSection>
     </Box>
   );
 };
