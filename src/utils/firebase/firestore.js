@@ -74,7 +74,7 @@ export const fetchPosts = () => getCollection('posts');
 export const fetchPost = async (postId) => {
   const docSnapshot = await getDocumentFromCollection('posts', postId);
 
-  return docSnapshot.exists() ? docSnapshot.data() : {};
+  return docSnapshot.exists() ? docSnapshot.data() : null;
 };
 
 export const fetchPostComments = (postId) =>
