@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Community from './pages/Community';
 import Post from './pages/Post';
 import CreateCommunityModal from './components/CreateCommunityModal';
+import SubmitPost from './pages/SubmitPost';
 
 function App() {
   const { fetchUserFromLocalStorage, listenForAuthChanges } = useUser();
@@ -29,6 +30,7 @@ function App() {
         <Route path='r/:communityName' element={<CommunityLayout />}>
           <Route index element={<Community />} />
           <Route path=':postId' element={<Post />} />
+          <Route path='submit' element={<SubmitPost />} />
         </Route>
       </Routes>
       <AuthenticationModal />
