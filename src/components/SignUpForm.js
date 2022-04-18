@@ -1,8 +1,9 @@
-import { VStack } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
 import * as yup from 'yup';
 import { checkIfEmailIsNotRegistered } from '../utils/firebase/auth';
 import { checkIfUsernameIsAvailable } from '../utils/firebase/firestore';
-import InputField from './forms/InputField';
+import Field from './forms/Field';
+
 import MultiStepForm, { FormStep } from './forms/MultiStepForm';
 
 const validationSchema = {
@@ -54,14 +55,18 @@ const SignUpForm = ({ handleSubmit }) => {
       validateOnChange={false}
     >
       <FormStep validationSchema={validationSchema.step1}>
-        <InputField name='email' placeholder='Email' />
+        <Field name='email'>
+          <Input placeholder='Email' />
+        </Field>
       </FormStep>
 
       <FormStep validationSchema={validationSchema.step2}>
-        <VStack spacing={3}>
-          <InputField name='username' placeholder='Username' />
-          <InputField name='password' type='password' placeholder='Password' />
-        </VStack>
+        <Field name='username'>
+          <Input placeholder='Username' />
+        </Field>
+        <Field name='password'>
+          <Input type='password' placeholder='Password' />
+        </Field>
       </FormStep>
     </MultiStepForm>
   );

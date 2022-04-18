@@ -1,6 +1,7 @@
-import { VStack } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
 import * as yup from 'yup';
-import InputField from './forms/InputField';
+import Field from './forms/Field';
+
 import MultiStepForm, { FormStep } from './forms/MultiStepForm';
 
 const validationSchema = yup.object({
@@ -18,10 +19,12 @@ const SignInForm = ({ handleSubmit }) => {
       onSubmit={handleSubmit}
     >
       <FormStep validationSchema={validationSchema}>
-        <VStack spacing={3}>
-          <InputField name='email' placeholder='Email' />
-          <InputField name='password' type='password' placeholder='Password' />
-        </VStack>
+        <Field name='email'>
+          <Input placeholder='Email' />
+        </Field>
+        <Field name='password'>
+          <Input type='password' placeholder='Password' />
+        </Field>
       </FormStep>
     </MultiStepForm>
   );
