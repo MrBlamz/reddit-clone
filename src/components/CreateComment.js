@@ -7,7 +7,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-import useUser from '../hooks/useUser';
+import { useUser } from '../hooks/useUser';
 import { createComment } from '../utils/firebase/firestore';
 import AutoResizeTextArea from './AutoResizeTextArea';
 

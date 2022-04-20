@@ -16,7 +16,7 @@ import brandTextWhite from '../assets/logo/text_white_theme.svg';
 import brandTextDark from '../assets/logo/text_dark_theme.svg';
 import UserMenu from './UserMenu';
 import useModal from '../hooks/useModal';
-import useUser from '../hooks/useUser';
+import { useUser } from '../hooks/useUser';
 
 const Logo = () => {
   const brandName = useColorModeValue(brandTextWhite, brandTextDark);

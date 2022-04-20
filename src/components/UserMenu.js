@@ -22,7 +22,7 @@ import { BsMoon, BsSun } from 'react-icons/bs';
 import { FiLogIn } from 'react-icons/fi';
 import { signOut } from '../utils/firebase/auth';
 import useModal from '../hooks/useModal';
-import useUser from '../hooks/useUser';
+import { useUser } from '../hooks/useUser';
 
 const Item = ({ onClick, icon, text, ...rest }) => (
   <MenuItem onClick={onClick} {...rest}>

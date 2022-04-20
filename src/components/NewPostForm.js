@@ -9,7 +9,7 @@ import {
 import { Form, Formik } from 'formik';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import * as yup from 'yup';
-import useUser from '../hooks/useUser';
+import { useUser } from '../hooks/useUser';
 import { createPost } from '../utils/firebase/firestore';
 import AutoResizeTextArea from './AutoResizeTextArea';
 import Field from './forms/Field';
