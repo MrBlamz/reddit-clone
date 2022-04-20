@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
-import useUser from './hooks/useUser';
+import { useAuth } from './hooks/useAuth';
 import Navbar from './components/Navbar';
 import AuthenticationModal from './components/AuthenticationModal';
 import CommunityLayout from './layouts/CommunityLayout';
@@ -11,7 +11,7 @@ import CreateCommunityModal from './components/CreateCommunityModal';
 import SubmitPost from './pages/SubmitPost';
 
 function App() {
-  const { fetchUserFromLocalStorage, listenForAuthChanges } = useUser();
+  const { fetchUserFromLocalStorage, listenForAuthChanges } = useAuth();
 
   useEffect(() => {
     fetchUserFromLocalStorage();

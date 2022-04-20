@@ -3,7 +3,7 @@ import { actions as authActions } from '../store/auth';
 import { auth } from '../utils/firebase/auth';
 import { fetchUserData } from '../utils/firebase/firestore';
 
-const useUser = () => {
+export const useAuth = () => {
   const dispatch = useDispatch();
 
   const fetchUserFromLocalStorage = () => {
@@ -44,5 +44,3 @@ const useUser = () => {
     listenForAuthChanges,
   };
 };
-
-export default useUser;
