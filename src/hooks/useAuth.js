@@ -5,6 +5,7 @@ import { fetchUserData } from '../utils/firebase/firestore';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
+  let isFirstRun = true;
 
   const fetchUserFromLocalStorage = () => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -30,6 +31,11 @@ export const useAuth = () => {
           })
         );
 
+        if (!isFirstRun) return;
+      }
+
+      if (isFirstRun) {
+        isFirstRun = false;
         return;
       }
 
