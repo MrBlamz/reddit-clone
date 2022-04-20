@@ -1,5 +1,7 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
+const initialState = { isLoggedIn: false, user: null, userData: {} };
+
 const addUser = (state, action) => {
   state.user = action.payload.user;
   state.userData = action.payload.userData;
@@ -8,21 +10,13 @@ const addUser = (state, action) => {
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    isLoggedIn: false,
-    user: null,
-    userData: {},
-  },
+  initialState,
   reducers: {
     fetchUserFromLocalStorage: addUser,
 
     login: addUser,
 
-    logout: (state) => {
-      state.user = null;
-      state.userData = {};
-      state.isLoggedIn = false;
-    },
+    logout: () => initialState,
   },
 });
 
