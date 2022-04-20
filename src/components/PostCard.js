@@ -83,6 +83,7 @@ const PostCard = ({
   timestamp,
   isFirst,
   isLast,
+  id,
   ...rest
 }) => {
   const ACTION_BUTTONS = [
@@ -109,6 +110,25 @@ const PostCard = ({
     'brand.borderLight',
     'brand.borderDark'
   );
+
+  const VoteButtons = () => (
+    <VotingButtons
+      votes={votes}
+      direction={isMobile ? 'row' : 'column'}
+      fontSize={isMobile && '14px'}
+    />
+  );
+
+  const Buttons = () =>
+    ACTION_BUTTONS.map((btn) => (
+      <ActionButton
+        p={isMobile ? 1 : 4}
+        key={btn.ariaLabel}
+        ariaLabel={btn.ariaLabel}
+        icon={btn.icon}
+        text={btn.text}
+      />
+    ));
 
   return (
     <Flex
@@ -141,17 +161,9 @@ const PostCard = ({
             />
 
             <Flex>
-              <VotingButtons votes={votes} direction='row' fontSize='14px' />
+              <VoteButtons />
               <Flex ml={2} flexWrap='wrap'>
-                {ACTION_BUTTONS.map((btn) => (
-                  <ActionButton
-                    p={1}
-                    key={btn.ariaLabel}
-                    ariaLabel={btn.ariaLabel}
-                    icon={btn.icon}
-                    text={btn.text}
-                  />
-                ))}
+                <Buttons />
               </Flex>
             </Flex>
           </VStack>
@@ -167,7 +179,7 @@ const PostCard = ({
       ) : (
         <>
           <Flex p={2}>
-            <VotingButtons votes={votes} />
+            <VoteButtons />
             <DocumentIcon />
           </Flex>
           <Box>
@@ -183,14 +195,7 @@ const PostCard = ({
                   <ExpandButton />
                   <Divider orientation='vertical' h='50%' />
                   <Flex>
-                    {ACTION_BUTTONS.map((btn) => (
-                      <ActionButton
-                        key={btn.text}
-                        ariaLabel={btn.ariaLabel}
-                        icon={btn.icon}
-                        text={btn.text}
-                      />
-                    ))}
+                    <Buttons />
                   </Flex>
                 </HStack>
               </Flex>
