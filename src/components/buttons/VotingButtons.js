@@ -1,13 +1,28 @@
-import { Stack, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import DownVoteButton from './DownVoteButton';
 import UpVoteButton from './UpVoteButton';
 
-const VotingButtons = ({ votes, ...rest }) => (
-  <Stack alignItems='center' justifyContent='center' lineHeight={0} {...rest}>
-    <UpVoteButton />
-    <Text fontWeight='bold'>{votes}</Text>
-    <DownVoteButton />
-  </Stack>
-);
+const isUpVote = (vote) => vote === true;
+const isDownVote = (vote) => vote === false;
+
+const VotingButtons = ({
+  postId,
+  votesNumber,
+  userVote,
+  onUpVoteClick,
+  onDownVoteClick,
+  ...props
+}) => {
+  return (
+    <Flex alignItems='center' justifyContent='center' {...props}>
+      <UpVoteButton isUpVote={isUpVote(userVote)} onClick={onUpVoteClick} />
+      <Text fontWeight='bold'>{votesNumber}</Text>
+      <DownVoteButton
+        isDownVote={isDownVote(userVote)}
+        onClick={onDownVoteClick}
+      />
+    </Flex>
+  );
+};
 
 export default VotingButtons;
