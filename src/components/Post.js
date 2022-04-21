@@ -79,6 +79,19 @@ const Buttons = ({ commentsNumber, children }) => (
   </Flex>
 );
 
+const VoteButtons = ({ votes }) => (
+  <VotingButtons
+    fontSize='14px'
+    votes={votes}
+    h='full'
+    justifyContent='flex-start'
+    direction={{ base: 'row', md: 'column' }}
+    position={{ base: 'static', md: 'absolute' }}
+    top={2}
+    left={2}
+  />
+);
+
 const Post = ({ title, content, author, votes, commentsNumber, timestamp }) => {
   const [isMobile] = useMediaQuery('(max-width: 48rem)');
 
@@ -87,19 +100,12 @@ const Post = ({ title, content, author, votes, commentsNumber, timestamp }) => {
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
       <Buttons commentsNumber={commentsNumber}>
-        <VotingButtons fontSize='14px' votes={votes} direction='row' />
+        <VoteButtons votes={votes} />
       </Buttons>
     </Container>
   ) : (
     <Container position='relative'>
-      <VotingButtons
-        fontSize='14px'
-        votes={votes}
-        justifyContent='flex-start'
-        position='absolute'
-        top={2}
-        left={2}
-      />
+      <VoteButtons votes={votes} />
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
       <Buttons commentsNumber={commentsNumber} />
