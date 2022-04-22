@@ -117,6 +117,7 @@ const Post = () => {
           commentsNumber={post.commentsNumber}
           votes={post.votes}
           timestamp={post.timestamp}
+          postId={postId}
         />
       )}
 

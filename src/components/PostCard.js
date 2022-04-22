@@ -17,8 +17,8 @@ import { BiShare } from 'react-icons/bi';
 import { BsArrowsAngleExpand, BsBookmark, BsCardText } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
 import { getElapsedTimeAsString } from '../utils/date';
-import VotingButtons from './buttons/VotingButtons';
 import ActionButton from './buttons/ActionButton';
+import { PostVotingButtons } from './buttons/PostVotingButtons';
 
 const ExpandButton = ({ ...rest }) => (
   <IconButton
@@ -112,8 +112,9 @@ const PostCard = ({
   );
 
   const VoteButtons = () => (
-    <VotingButtons
-      votes={votes}
+    <PostVotingButtons
+      postId={id}
+      votesNumber={votes}
       direction={isMobile ? 'row' : 'column'}
       fontSize={isMobile && '14px'}
     />

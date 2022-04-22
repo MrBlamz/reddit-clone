@@ -25,6 +25,7 @@ const Community = () => {
   const postCards = posts.map((post, i) => (
     <PostCard
       key={post.id}
+      id={post.id}
       isFirst={i === 0}
       communityName={post.communityName}
       title={post.title}

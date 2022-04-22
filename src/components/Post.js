@@ -16,7 +16,7 @@ import {
   SaveButton,
   ShareButton,
 } from './buttons/ActionButton';
-import VotingButtons from './buttons/VotingButtons';
+import { PostVotingButtons } from './buttons/PostVotingButtons';
 
 const Container = ({ children, ...rest }) => (
   <Flex
@@ -79,10 +79,11 @@ const Buttons = ({ commentsNumber, children }) => (
   </Flex>
 );
 
-const VoteButtons = ({ votes }) => (
-  <VotingButtons
+const VoteButtons = ({ votes, postId }) => (
+  <PostVotingButtons
     fontSize='14px'
-    votes={votes}
+    votesNumber={votes}
+    postId={postId}
     h='full'
     justifyContent='flex-start'
     direction={{ base: 'row', md: 'column' }}
@@ -92,7 +93,15 @@ const VoteButtons = ({ votes }) => (
   />
 );
 
-const Post = ({ title, content, author, votes, commentsNumber, timestamp }) => {
+const Post = ({
+  title,
+  content,
+  author,
+  votes,
+  commentsNumber,
+  timestamp,
+  postId,
+}) => {
   const [isMobile] = useMediaQuery('(max-width: 48rem)');
 
   return isMobile ? (
@@ -100,12 +109,12 @@ const Post = ({ title, content, author, votes, commentsNumber, timestamp }) => {
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
       <Buttons commentsNumber={commentsNumber}>
-        <VoteButtons votes={votes} />
+        <VoteButtons votes={votes} postId={postId} />
       </Buttons>
     </Container>
   ) : (
     <Container position='relative'>
-      <VoteButtons votes={votes} />
+      <VoteButtons votes={votes} postId={postId} />
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
       <Buttons commentsNumber={commentsNumber} />
