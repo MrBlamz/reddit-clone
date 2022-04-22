@@ -6,6 +6,7 @@ import {
   getFirestore,
   orderBy,
   query,
+  runTransaction,
   setDoc,
   where,
 } from 'firebase/firestore';
@@ -183,4 +184,60 @@ export const createComment = async (content, author, userId, postId) => {
   await setDoc(docRef, newComment);
 
   return newComment;
+};
+
+export const deletePostVote = async (vote, userId, postId) => {
+  const userDataRef = doc(db, 'users', userId);
+  const postRef = doc(db, 'posts', postId);
+
+  try {
+    return await runTransaction(db, async (transaction) => {
+      const userDataDoc = await transaction.get(userDataRef);
+      const postDoc = await transaction.get(postRef);
+
+      const updatedPostVoteNumber = vote
+        ? postDoc.data().votes - 1
+        : postDoc.data().votes + 1;
+
+      const updatedUserVotes = {
+        ...userDataDoc.data().votes.posts,
+      };
+      delete updatedUserVotes[postId];
+
+      transaction.update(postRef, { votes: updatedPostVoteNumber });
+      transaction.update(userDataRef, { 'votes.posts': updatedUserVotes });
+
+      return updatedPostVoteNumber;
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+export const addPostVote = async (vote, userId, postId) => {
+  const userDataRef = doc(db, 'users', userId);
+  const postRef = doc(db, 'posts', postId);
+
+  try {
+    return await runTransaction(db, async (transaction) => {
+      const userDataDoc = await transaction.get(userDataRef);
+      const postDoc = await transaction.get(postRef);
+
+      const updatedPostVoteNumber = vote
+        ? postDoc.data().votes + 1
+        : postDoc.data().votes - 1;
+
+      const updatedUserVotes = {
+        ...userDataDoc.data().votes.posts,
+        [postId]: vote,
+      };
+
+      transaction.update(postRef, { votes: updatedPostVoteNumber });
+      transaction.update(userDataRef, { 'votes.posts': updatedUserVotes });
+
+      return updatedPostVoteNumber;
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
 };
