@@ -241,3 +241,31 @@ export const addPostVote = async (vote, userId, postId) => {
     return Promise.reject(error);
   }
 };
+
+export const swapPostVote = async (vote, userId, postId) => {
+  const userDataRef = doc(db, 'users', userId);
+  const postRef = doc(db, 'posts', postId);
+
+  try {
+    return await runTransaction(db, async (transaction) => {
+      const userDataDoc = await transaction.get(userDataRef);
+      const postDoc = await transaction.get(postRef);
+
+      const updatedPostVoteNumber = vote
+        ? postDoc.data().votes + 2
+        : postDoc.data().votes - 2;
+
+      const updatedUserVotes = {
+        ...userDataDoc.data().votes.posts,
+        [postId]: vote,
+      };
+
+      transaction.update(postRef, { votes: updatedPostVoteNumber });
+      transaction.update(userDataRef, { 'votes.posts': updatedUserVotes });
+
+      return updatedPostVoteNumber;
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};

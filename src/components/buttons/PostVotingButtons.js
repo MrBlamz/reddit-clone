@@ -6,6 +6,7 @@ import { selectVote } from '../../store/auth';
 import {
   addPostVote as addPostVoteOnServer,
   deletePostVote as deletePostVoteOnServer,
+  swapPostVote as swapPostVoteOnServer,
 } from '../../utils/firebase/firestore';
 import VotingButtons from './VotingButtons';
 
@@ -33,6 +34,13 @@ export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
     sendNotification('success', 'Your vote was added successfully.');
   };
 
+  const handleSwappingVote = async (vote) => {
+    const updatedVotesNumber = await swapPostVoteOnServer(vote, userId, postId);
+    addPostVote(vote, postId);
+    setVotes(updatedVotesNumber);
+    sendNotification('success', 'Your vote has been swapped successfully.');
+  };
+
   const handleClick = (vote) => async (event) => {
     event.stopPropagation();
 
@@ -43,7 +51,20 @@ export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
     }
 
     try {
-      userVote === vote ? handleDeletingVote(vote) : handleAddingVote(vote);
+      // runs if previous vote is equal to the new vote
+      if (userVote === vote) {
+        handleDeletingVote(vote);
+        return;
+      }
+
+      // runs if user has a previous valid vote (boolean) and old vote is
+      // different than new vote
+      if (typeof userVote === 'boolean' && userVote !== vote) {
+        handleSwappingVote(vote);
+        return;
+      }
+
+      handleAddingVote(vote);
     } catch (error) {
       console.log(error);
       sendNotification(
