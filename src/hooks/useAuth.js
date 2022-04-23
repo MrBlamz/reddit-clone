@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { actions as authActions } from '../store/auth';
+import { actions as authActions, USER_DATA } from '../store/auth';
 import { auth } from '../utils/firebase/auth';
 import { fetchUserData } from '../utils/firebase/firestore';
 
@@ -19,7 +19,7 @@ export const useAuth = () => {
   const listenForAuthChanges = () => {
     return auth.onAuthStateChanged(async (user) => {
       if (user) {
-        const userData = await fetchUserData(user.uid);
+        const userData = (await fetchUserData(user.uid)) || USER_DATA;
 
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('userData', JSON.stringify(userData));

@@ -57,7 +57,7 @@ export const fetchUsername = async (userId) => {
 export const fetchUserData = async (userId) => {
   const docSnapshot = await getDocumentFromCollection('users', userId);
 
-  return docSnapshot.exists() ? docSnapshot.data() : {};
+  return docSnapshot.exists() && docSnapshot.data();
 };
 
 export const checkIfCommunityExists = async (communityName) => {

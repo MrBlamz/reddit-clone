@@ -1,14 +1,17 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
+export const USER_DATA = {
+  username: 'Redditor',
+  votes: {
+    posts: {},
+    comments: {},
+  },
+};
+
 const initialState = {
   isLoggedIn: false,
   user: null,
-  userData: {
-    votes: {
-      posts: {},
-      comments: {},
-    },
-  },
+  userData: USER_DATA,
 };
 
 const addUser = (state, action) => {
