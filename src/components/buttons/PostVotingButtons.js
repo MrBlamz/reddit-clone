@@ -87,7 +87,6 @@ export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
 
   return (
     <VotingButtons
-      postId={postId}
       userVote={userVote}
       votesNumber={votes}
       onUpVoteClick={handleClick(true)}

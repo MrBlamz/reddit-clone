@@ -6,7 +6,6 @@ const isUpVote = (vote) => vote === true;
 const isDownVote = (vote) => vote === false;
 
 const VotingButtons = ({
-  postId,
   votesNumber,
   userVote,
   onUpVoteClick,
