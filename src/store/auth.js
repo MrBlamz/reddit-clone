@@ -63,7 +63,7 @@ export const selectUserId = createSelector(
   (auth) => auth.user?.uid
 );
 
-export const selectVote = (postId) =>
+export const selectPostVote = (postId) =>
   createSelector(
     (state) => state.auth.userData,
     (userData) => userData.votes.posts[postId]

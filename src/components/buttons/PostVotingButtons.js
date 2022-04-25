@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNotification } from '../../hooks/useNotification';
 import { useUser } from '../../hooks/useUser';
-import { selectVote } from '../../store/auth';
+import { selectPostVote } from '../../store/auth';
 import {
   addPostVote as addPostVoteOnServer,
   deletePostVote as deletePostVoteOnServer,
@@ -20,7 +20,7 @@ const LOGIN_MESSAGE = 'You must login to vote on posts.';
 const ERROR_MESSAGE = 'There was an error adding your vote. Please try again.';
 
 export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
-  const userVote = useSelector(selectVote(postId));
+  const userVote = useSelector(selectPostVote(postId));
   const [votes, setVotes] = useState(votesNumber);
   const { isLoggedIn, userId, addPostVote, deletePostVote } = useUser();
   const { sendNotification } = useNotification();
