@@ -42,6 +42,19 @@ const authSlice = createSlice({
       const { postId } = action.payload;
       delete state.userData.votes.posts[postId];
     },
+
+    addCommentVote: (state, action) => {
+      const { vote, commentId } = action.payload;
+      state.userData.votes.comments = {
+        ...state.userData.votes.comments,
+        [commentId]: vote,
+      };
+    },
+
+    deleteCommentVote: (state, action) => {
+      const { commentId } = action.payload;
+      delete state.userData.votes.comments[commentId];
+    },
   },
 });
 
@@ -67,6 +80,12 @@ export const selectPostVote = (postId) =>
   createSelector(
     (state) => state.auth.userData,
     (userData) => userData.votes.posts[postId]
+  );
+
+export const selectCommentVote = (commentId) =>
+  createSelector(
+    (state) => state.auth.userData,
+    (userData) => userData.votes.comments[commentId]
   );
 
 export default authSlice.reducer;

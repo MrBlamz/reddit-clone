@@ -22,11 +22,23 @@ export const useUser = () => {
     dispatch(userActions.deletePostVote(payload));
   };
 
+  const addCommentVote = (vote, commentId) => {
+    const payload = { vote, commentId };
+    dispatch(userActions.addCommentVote(payload));
+  };
+
+  const deleteCommentVote = (commentId) => {
+    const payload = { commentId };
+    dispatch(userActions.deleteCommentVote(payload));
+  };
+
   return {
     isLoggedIn,
     userId,
     username,
     addPostVote,
     deletePostVote,
+    addCommentVote,
+    deleteCommentVote,
   };
 };
