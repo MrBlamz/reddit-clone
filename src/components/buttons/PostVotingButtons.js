@@ -1,5 +1,15 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import {
+  ADD_VOTE,
+  DELETE_VOTE,
+  SWAP_VOTE,
+  ADDED_VOTE_MESSAGE,
+  DELETED_VOTE_MESSAGE,
+  SWAPPED_VOTE_MESSAGE,
+  LOGIN_MESSAGE,
+  ERROR_MESSAGE,
+} from '../../constants';
 import { useNotification } from '../../hooks/useNotification';
 import { useUser } from '../../hooks/useUser';
 import { selectPostVote } from '../../store/auth';
@@ -9,15 +19,6 @@ import {
   swapPostVote as swapPostVoteOnServer,
 } from '../../utils/firebase/firestore';
 import VotingButtons from './VotingButtons';
-
-const ADD_VOTE = 'addVote';
-const DELETE_VOTE = 'deleteVote';
-const SWAP_VOTE = 'swapVote';
-const ADDED_VOTE_MESSAGE = 'Your vote has been added successfully.';
-const DELETED_VOTE_MESSAGE = 'Your vote has been removed successfully.';
-const SWAPPED_VOTE_MESSAGE = 'Your vote has been swapped successfully.';
-const LOGIN_MESSAGE = 'You must login to vote on posts.';
-const ERROR_MESSAGE = 'There was an error adding your vote. Please try again.';
 
 export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
   const userVote = useSelector(selectPostVote(postId));
