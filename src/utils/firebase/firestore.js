@@ -125,6 +125,23 @@ export const writeUsernameInDb = (username, userId) => {
   ]);
 };
 
+const saveUsername = (username, userId) => {
+  const sanitizedUsername = username.toLowerCase();
+  setDoc(doc(db, 'usernames', sanitizedUsername), { userId });
+};
+
+const saveUserData = (userId, userData) =>
+  setDoc(doc(db, 'users', userId), userData);
+
+export const handleSignUpWithEmailAndPassword = (userId, userData) => {
+  const { username } = userData;
+
+  return Promise.all([
+    saveUsername(username, userId),
+    saveUserData(userId, userData),
+  ]);
+};
+
 export const createCommunity = async (name) => {
   const docRef = createDocument('communities');
   const sanitizedCommunityName = name.toLowerCase().trim();

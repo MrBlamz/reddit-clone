@@ -12,7 +12,6 @@ import {
   ModalOverlay,
   Text,
   useColorModeValue,
-  useToast,
 } from '@chakra-ui/react';
 import art from '../assets/modalArt.png';
 import { FcGoogle } from 'react-icons/fc';
@@ -21,96 +20,83 @@ import {
   signUpWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from '../utils/firebase/auth';
-import Toast from './Toast';
 import SignUpForm from './SignUpForm';
-import { fetchUsername, writeUsernameInDb } from '../utils/firebase/firestore';
+import {
+  fetchUsername,
+  handleSignUpWithEmailAndPassword,
+} from '../utils/firebase/firestore';
 import SignInForm from './SignInForm';
 import useModal from '../hooks/useModal';
+import { useNotification } from '../hooks/useNotification';
+import { USER_DATA as NEW_USER_DATA } from '../store/auth';
 
-const SuccessfulSignInToast = ({ username = '' }) => (
-  <Toast variant='success' text={`Welcome back ${username}`} />
-);
-
-const SuccessfulSignUpToast = () => (
-  <Toast variant='success' text='Your account has been registered!' />
-);
-
-const FailedAuthenticationToast = ({ error }) => (
-  <Toast variant='error' text={error} />
-);
+const ACCOUNT_REGISTERED_MESSAGE = 'Your account has been registered!';
+const LOGIN_MESSAGE = 'Welcome back ';
 
 const AuthenticationModal = () => {
   const { isOpen, isLogin, onClose, changeMode } = useModal(
     'AuthenticationModal'
   );
+  const { sendNotification } = useNotification();
 
-  const toast = useToast({
-    duration: 3000,
-    position: 'bottom',
-  });
+  const handleFormError = (message, formActions) => {
+    sendNotification('error', message);
+    formActions.setSubmitting(false);
+  };
 
-  const handleSignUpFormSubmit = (values, actions) => {
+  const handleSignUpFormSubmit = async (values, actions) => {
     const { email, password, username } = values;
 
-    signUpWithEmailAndPassword(email, password)
-      .then(({ user }) => {
-        writeUsernameInDb(username, user.uid);
-      })
-      .then(() => {
-        onClose();
+    try {
+      const { user } = await signUpWithEmailAndPassword(email, password);
+      const userData = { ...NEW_USER_DATA, username };
 
-        toast({
-          render: () => <SuccessfulSignUpToast />,
-        });
-      })
-      .catch((error) => {
-        toast({
-          render: () => <FailedAuthenticationToast error={error.message} />,
-        });
-      })
-      .finally(() => actions.setSubmitting(false));
+      await handleSignUpWithEmailAndPassword(user.uid, userData);
+
+      onClose();
+      sendNotification('success', ACCOUNT_REGISTERED_MESSAGE);
+    } catch ({ message }) {
+      handleFormError(message, actions);
+    }
   };
 
-  const handleSignInFormSubmit = (values, actions) => {
+  const handleSignInFormSubmit = async (values, actions) => {
     const { email, password } = values;
 
-    signInWithEmailAndPassword(email, password)
-      .then(async ({ user }) => {
-        const username = await fetchUsername(user.uid);
-
-        onClose();
-
-        toast({
-          render: () => <SuccessfulSignInToast username={username} />,
-        });
-      })
-      .catch((error) => {
-        toast({
-          render: () => <FailedAuthenticationToast error={error.message} />,
-        });
-      })
-      .finally(() => actions.setSubmitting(false));
+    try {
+      const { user } = await signInWithEmailAndPassword(email, password);
+      const username = await fetchUsername(user.uid);
+      onClose();
+      sendNotification('success', LOGIN_MESSAGE + username);
+    } catch ({ message }) {
+      handleFormError(message, actions);
+    }
   };
 
-  const handleGoogleButtonClick = () => {
-    signInWithGoogleAccount()
-      .then((result) => {
-        const { creationTime, lastSignInTime } =
-          result.user.auth.currentUser.metadata;
-        const isNewUser = creationTime === lastSignInTime;
+  const handleGoogleButtonClick = async () => {
+    sendNotification('warning', 'Google authentication is currently disabled.');
+    // try {
+    //   const { user } = await signInWithGoogleAccount();
 
-        onClose();
+    //   const { creationTime, lastSignInTime } = user.auth.currentUser.metadata;
+    //   const isNewUser = creationTime === lastSignInTime;
 
-        toast({
-          render: () =>
-            isNewUser ? <SuccessfulSignUpToast /> : <SuccessfulSignInToast />,
-        });
-      })
-      .catch((error) => {
-        toast({
-          render: () => <FailedAuthenticationToast error={error.message} />,
-        });
-      });
+    //   onClose();
+
+    //   if (isNewUser) {
+    // TODO - prompt for username and then save userdata on server
+    //     const userData = { ...NEW_USER_DATA, username: 'Google' };
+    //     // saveUserDataOnServer(user.uid, userData);
+    //     sendNotification('success', ACCOUNT_REGISTERED_MESSAGE);
+    //     return;
+    //   }
+
+    //   const username = await fetchUsername(user.uid);
+    //   sendNotification('success', LOGIN_MESSAGE + username);
+    // } catch (error) {
+    //   console.log(error);
+    //   sendNotification('error', error.message);
+    // }
   };
 
   return (
