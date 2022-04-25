@@ -10,35 +10,49 @@ import {
 } from '../../utils/firebase/firestore';
 import VotingButtons from './VotingButtons';
 
+const ADD_VOTE = 'addVote';
+const DELETE_VOTE = 'deleteVote';
+const SWAP_VOTE = 'swapVote';
+const ADDED_VOTE_MESSAGE = 'Your vote has been added successfully.';
+const DELETED_VOTE_MESSAGE = 'Your vote has been removed successfully.';
+const SWAPPED_VOTE_MESSAGE = 'Your vote has been swapped successfully.';
+const LOGIN_MESSAGE = 'You must login to vote on posts.';
+const ERROR_MESSAGE = 'There was an error adding your vote. Please try again.';
+
 export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
   const userVote = useSelector(selectVote(postId));
   const [votes, setVotes] = useState(votesNumber);
   const { isLoggedIn, userId, addPostVote, deletePostVote } = useUser();
   const { sendNotification } = useNotification();
 
-  const handleDeletingVote = async (vote) => {
-    const updatedVotesNumber = await deletePostVoteOnServer(
-      vote,
-      userId,
-      postId
-    );
-    deletePostVote(postId);
-    setVotes(updatedVotesNumber);
-    sendNotification('success', 'Your vote has been removed successfully.');
-  };
+  const handleVotingLogic = async (option, vote) => {
+    let updatedVotesNumber;
+    let message;
+    const OPTIONS = {
+      [ADD_VOTE]: async () => {
+        updatedVotesNumber = await addPostVoteOnServer(vote, userId, postId);
+        addPostVote(vote, postId);
+        message = ADDED_VOTE_MESSAGE;
+      },
 
-  const handleAddingVote = async (vote) => {
-    const updatedVotesNumber = await addPostVoteOnServer(vote, userId, postId);
-    addPostVote(vote, postId);
-    setVotes(updatedVotesNumber);
-    sendNotification('success', 'Your vote was added successfully.');
-  };
+      [DELETE_VOTE]: async () => {
+        updatedVotesNumber = await deletePostVoteOnServer(vote, userId, postId);
+        deletePostVote(postId);
+        message = DELETED_VOTE_MESSAGE;
+      },
 
-  const handleSwappingVote = async (vote) => {
-    const updatedVotesNumber = await swapPostVoteOnServer(vote, userId, postId);
-    addPostVote(vote, postId);
+      [SWAP_VOTE]: async () => {
+        updatedVotesNumber = await swapPostVoteOnServer(vote, userId, postId);
+        addPostVote(vote, postId);
+        message = SWAPPED_VOTE_MESSAGE;
+      },
+    };
+
+    const handleVote = OPTIONS[option];
+
+    await handleVote();
     setVotes(updatedVotesNumber);
-    sendNotification('success', 'Your vote has been swapped successfully.');
+    sendNotification('success', message);
   };
 
   const handleClick = (vote) => async (event) => {
@@ -46,31 +60,28 @@ export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
 
     // Prevent logged out users from voting
     if (!isLoggedIn) {
-      sendNotification('warning', 'You must login to vote on posts.');
+      sendNotification('warning', LOGIN_MESSAGE);
       return;
     }
 
     try {
       // runs if previous vote is equal to the new vote
       if (userVote === vote) {
-        handleDeletingVote(vote);
+        handleVotingLogic(DELETE_VOTE, vote);
         return;
       }
 
       // runs if user has a previous valid vote (boolean) and old vote is
       // different than new vote
       if (typeof userVote === 'boolean' && userVote !== vote) {
-        handleSwappingVote(vote);
+        handleVotingLogic(SWAP_VOTE, vote);
         return;
       }
 
-      handleAddingVote(vote);
+      handleVotingLogic(ADD_VOTE, vote);
     } catch (error) {
       console.log(error);
-      sendNotification(
-        'error',
-        'There was an error adding your vote. Please try again.'
-      );
+      sendNotification('error', ERROR_MESSAGE);
     }
   };
 
