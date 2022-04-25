@@ -9,9 +9,16 @@ import {
 } from '@chakra-ui/react';
 import placeholderAvatar from '../assets/avatar/avatar.png';
 import { getElapsedTimeAsString } from '../utils/date';
-import VotingButtons from './buttons/VotingButtons';
+import { CommentVotingButtons } from './buttons/CommentVotingButtons';
 
-const Comment = ({ author, content, votes, timestamp, isPostAuthor }) => {
+const Comment = ({
+  author,
+  content,
+  votes,
+  timestamp,
+  isPostAuthor,
+  commentId,
+}) => {
   const textColor = useColorModeValue('brand.secondary', 'brand.primary');
 
   return (
@@ -23,8 +30,9 @@ const Comment = ({ author, content, votes, timestamp, isPostAuthor }) => {
       borderRadius='5px'
       position='relative'
     >
-      <VotingButtons
-        votes={votes}
+      <CommentVotingButtons
+        commentId={commentId}
+        votesNumber={votes}
         direction='column'
         position='absolute'
         top={2}

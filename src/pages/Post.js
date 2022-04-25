@@ -142,6 +142,7 @@ const Post = () => {
           comments.map((comment) => (
             <Comment
               key={comment.id}
+              commentId={comment.id}
               isPostAuthor={comment.userId === post.userId}
               author={comment.author}
               content={comment.content}
