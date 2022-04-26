@@ -12,13 +12,10 @@ import {
   SWAPPED_VOTE_MESSAGE,
   LOGIN_MESSAGE,
   ERROR_MESSAGE,
+  COLLECTIONS,
 } from '../../constants';
 import VotingButtons from './VotingButtons';
-import {
-  addCommentVote as addCommentVoteOnServer,
-  deleteCommentVote as deleteCommentVoteOnServer,
-  swapCommentVote as swapCommentVoteOnServer,
-} from '../../utils/firebase/firestore';
+import { handleVote as handleVoteOnServer } from '../../utils/firebase/firestore';
 
 export const CommentVotingButtons = ({ commentId, votesNumber, ...props }) => {
   const userVote = useSelector(selectCommentVote(commentId));
@@ -31,7 +28,9 @@ export const CommentVotingButtons = ({ commentId, votesNumber, ...props }) => {
     let message;
     const OPTIONS = {
       [ADD_VOTE]: async () => {
-        updatedVotesNumber = await addCommentVoteOnServer(
+        updatedVotesNumber = await handleVoteOnServer(
+          COLLECTIONS.COMMENT,
+          ADD_VOTE,
           vote,
           userId,
           commentId
@@ -41,7 +40,9 @@ export const CommentVotingButtons = ({ commentId, votesNumber, ...props }) => {
       },
 
       [DELETE_VOTE]: async () => {
-        updatedVotesNumber = await deleteCommentVoteOnServer(
+        updatedVotesNumber = await handleVoteOnServer(
+          COLLECTIONS.COMMENT,
+          DELETE_VOTE,
           vote,
           userId,
           commentId
@@ -51,7 +52,9 @@ export const CommentVotingButtons = ({ commentId, votesNumber, ...props }) => {
       },
 
       [SWAP_VOTE]: async () => {
-        updatedVotesNumber = await swapCommentVoteOnServer(
+        updatedVotesNumber = await handleVoteOnServer(
+          COLLECTIONS.COMMENT,
+          SWAP_VOTE,
           vote,
           userId,
           commentId

@@ -7,3 +7,7 @@ export const SWAPPED_VOTE_MESSAGE = 'Your vote has been swapped successfully.';
 export const LOGIN_MESSAGE = 'You must login to vote.';
 export const ERROR_MESSAGE =
   'There was an error adding your vote. Please try again.';
+export const COLLECTIONS = {
+  POST: 'posts',
+  COMMENT: 'comments',
+};

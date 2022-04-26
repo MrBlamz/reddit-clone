@@ -10,6 +10,7 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
+import { ADD_VOTE, DELETE_VOTE, SWAP_VOTE } from '../../constants';
 import app from '../../firebase.config';
 
 export const db = getFirestore(app);
@@ -203,170 +204,60 @@ export const createComment = async (content, author, userId, postId) => {
   return newComment;
 };
 
-export const deletePostVote = async (vote, userId, postId) => {
-  const userDataRef = doc(db, 'users', userId);
-  const postRef = doc(db, 'posts', postId);
+const updateUserVotes = (userDataDoc, collection, operationType, id, vote) => {
+  switch (operationType) {
+    case ADD_VOTE:
+    case SWAP_VOTE:
+      return { ...userDataDoc.data().votes[collection], [id]: vote };
 
-  try {
-    return await runTransaction(db, async (transaction) => {
-      const userDataDoc = await transaction.get(userDataRef);
-      const postDoc = await transaction.get(postRef);
+    case DELETE_VOTE:
+      const votes = { ...userDataDoc.data().votes[collection] };
+      delete votes[id];
+      return votes;
 
-      const updatedPostVoteNumber = vote
-        ? postDoc.data().votes - 1
-        : postDoc.data().votes + 1;
-
-      const updatedUserVotes = {
-        ...userDataDoc.data().votes.posts,
-      };
-      delete updatedUserVotes[postId];
-
-      transaction.update(postRef, { votes: updatedPostVoteNumber });
-      transaction.update(userDataRef, { 'votes.posts': updatedUserVotes });
-
-      return updatedPostVoteNumber;
-    });
-  } catch (error) {
-    return Promise.reject(error);
+    default:
+      return { ...userDataDoc.data().votes[collection] };
   }
 };
 
-export const addPostVote = async (vote, userId, postId) => {
+export const handleVote = async (
+  collection,
+  operationType,
+  vote,
+  userId,
+  id
+) => {
+  const OPTIONS = {
+    [ADD_VOTE]: (doc) => (vote ? doc.data().votes + 1 : doc.data().votes - 1),
+    [DELETE_VOTE]: (doc) =>
+      vote ? doc.data().votes - 1 : doc.data().votes + 1,
+    [SWAP_VOTE]: (doc) => (vote ? doc.data().votes + 2 : doc.data().votes - 2),
+  };
+
   const userDataRef = doc(db, 'users', userId);
-  const postRef = doc(db, 'posts', postId);
+  const docRef = doc(db, collection, id);
 
   try {
     return await runTransaction(db, async (transaction) => {
       const userDataDoc = await transaction.get(userDataRef);
-      const postDoc = await transaction.get(postRef);
+      const doc = await transaction.get(docRef);
+      const handleVote = OPTIONS[operationType];
 
-      const updatedPostVoteNumber = vote
-        ? postDoc.data().votes + 1
-        : postDoc.data().votes - 1;
+      const updatedVoteNumber = handleVote(doc);
+      const updatedUserVotes = updateUserVotes(
+        userDataDoc,
+        collection,
+        operationType,
+        id,
+        vote
+      );
 
-      const updatedUserVotes = {
-        ...userDataDoc.data().votes.posts,
-        [postId]: vote,
-      };
-
-      transaction.update(postRef, { votes: updatedPostVoteNumber });
-      transaction.update(userDataRef, { 'votes.posts': updatedUserVotes });
-
-      return updatedPostVoteNumber;
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
-
-export const swapPostVote = async (vote, userId, postId) => {
-  const userDataRef = doc(db, 'users', userId);
-  const postRef = doc(db, 'posts', postId);
-
-  try {
-    return await runTransaction(db, async (transaction) => {
-      const userDataDoc = await transaction.get(userDataRef);
-      const postDoc = await transaction.get(postRef);
-
-      const updatedPostVoteNumber = vote
-        ? postDoc.data().votes + 2
-        : postDoc.data().votes - 2;
-
-      const updatedUserVotes = {
-        ...userDataDoc.data().votes.posts,
-        [postId]: vote,
-      };
-
-      transaction.update(postRef, { votes: updatedPostVoteNumber });
-      transaction.update(userDataRef, { 'votes.posts': updatedUserVotes });
-
-      return updatedPostVoteNumber;
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
-
-export const deleteCommentVote = async (vote, userId, commentId) => {
-  const userDataRef = doc(db, 'users', userId);
-  const commentRef = doc(db, 'comments', commentId);
-
-  try {
-    return await runTransaction(db, async (transaction) => {
-      const userDataDoc = await transaction.get(userDataRef);
-      const commentDoc = await transaction.get(commentRef);
-
-      const updatedCommentVoteNumber = vote
-        ? commentDoc.data().votes - 1
-        : commentDoc.data().votes + 1;
-
-      const updatedUserCommentVotes = {
-        ...userDataDoc.data().votes.comments,
-      };
-      delete updatedUserCommentVotes[commentId];
-
-      transaction.update(commentRef, { votes: updatedCommentVoteNumber });
+      transaction.update(docRef, { votes: updatedVoteNumber });
       transaction.update(userDataRef, {
-        'votes.comments': updatedUserCommentVotes,
+        [`votes.${collection}`]: updatedUserVotes,
       });
 
-      return updatedCommentVoteNumber;
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
-
-export const addCommentVote = async (vote, userId, commentId) => {
-  const userDataRef = doc(db, 'users', userId);
-  const commentRef = doc(db, 'comments', commentId);
-
-  try {
-    return await runTransaction(db, async (transaction) => {
-      const userDataDoc = await transaction.get(userDataRef);
-      const commentDoc = await transaction.get(commentRef);
-
-      const updatedCommentVoteNumber = vote
-        ? commentDoc.data().votes + 1
-        : commentDoc.data().votes - 1;
-
-      const updatedUserVotes = {
-        ...userDataDoc.data().votes.comments,
-        [commentId]: vote,
-      };
-
-      transaction.update(commentRef, { votes: updatedCommentVoteNumber });
-      transaction.update(userDataRef, { 'votes.comments': updatedUserVotes });
-
-      return updatedCommentVoteNumber;
-    });
-  } catch (error) {
-    return Promise.reject(error);
-  }
-};
-
-export const swapCommentVote = async (vote, userId, commentId) => {
-  const userDataRef = doc(db, 'users', userId);
-  const commentRef = doc(db, 'comments', commentId);
-
-  try {
-    return await runTransaction(db, async (transaction) => {
-      const userDataDoc = await transaction.get(userDataRef);
-      const commentDoc = await transaction.get(commentRef);
-
-      const updatedCommentVoteNumber = vote
-        ? commentDoc.data().votes + 2
-        : commentDoc.data().votes - 2;
-
-      const updatedUserVotes = {
-        ...userDataDoc.data().votes.comments,
-        [commentId]: vote,
-      };
-
-      transaction.update(commentRef, { votes: updatedCommentVoteNumber });
-      transaction.update(userDataRef, { 'votes.comments': updatedUserVotes });
-
-      return updatedCommentVoteNumber;
+      return updatedVoteNumber;
     });
   } catch (error) {
     return Promise.reject(error);

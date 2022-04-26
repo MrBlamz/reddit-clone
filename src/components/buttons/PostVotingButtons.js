@@ -9,15 +9,12 @@ import {
   SWAPPED_VOTE_MESSAGE,
   LOGIN_MESSAGE,
   ERROR_MESSAGE,
+  COLLECTIONS,
 } from '../../constants';
 import { useNotification } from '../../hooks/useNotification';
 import { useUser } from '../../hooks/useUser';
 import { selectPostVote } from '../../store/auth';
-import {
-  addPostVote as addPostVoteOnServer,
-  deletePostVote as deletePostVoteOnServer,
-  swapPostVote as swapPostVoteOnServer,
-} from '../../utils/firebase/firestore';
+import { handleVote as handleVoteOnServer } from '../../utils/firebase/firestore';
 import VotingButtons from './VotingButtons';
 
 export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
@@ -31,19 +28,37 @@ export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
     let message;
     const OPTIONS = {
       [ADD_VOTE]: async () => {
-        updatedVotesNumber = await addPostVoteOnServer(vote, userId, postId);
+        updatedVotesNumber = await handleVoteOnServer(
+          COLLECTIONS.POST,
+          ADD_VOTE,
+          vote,
+          userId,
+          postId
+        );
         addPostVote(vote, postId);
         message = ADDED_VOTE_MESSAGE;
       },
 
       [DELETE_VOTE]: async () => {
-        updatedVotesNumber = await deletePostVoteOnServer(vote, userId, postId);
+        updatedVotesNumber = await handleVoteOnServer(
+          COLLECTIONS.POST,
+          DELETE_VOTE,
+          vote,
+          userId,
+          postId
+        );
         deletePostVote(postId);
         message = DELETED_VOTE_MESSAGE;
       },
 
       [SWAP_VOTE]: async () => {
-        updatedVotesNumber = await swapPostVoteOnServer(vote, userId, postId);
+        updatedVotesNumber = await handleVoteOnServer(
+          COLLECTIONS.POST,
+          SWAP_VOTE,
+          vote,
+          userId,
+          postId
+        );
         addPostVote(vote, postId);
         message = SWAPPED_VOTE_MESSAGE;
       },
