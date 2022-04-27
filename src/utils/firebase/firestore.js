@@ -12,6 +12,7 @@ import {
 } from 'firebase/firestore';
 import { ADD_VOTE, DELETE_VOTE, SWAP_VOTE } from '../../constants';
 import app from '../../firebase.config';
+import { sanitizeString } from '../string';
 
 export const db = getFirestore(app);
 
@@ -39,7 +40,7 @@ const createDocument = (collectionName) => doc(collection(db, collectionName));
 // Fetching from db functions
 
 export const checkIfUsernameIsAvailable = async (username) => {
-  const sanitizedUsername = username.toLowerCase();
+  const sanitizedUsername = sanitizeString(username);
   const querySnapshot = await getDocs(collection(db, 'usernames'));
 
   return querySnapshot.docs.every((doc) => doc.id !== sanitizedUsername);
@@ -62,7 +63,7 @@ export const fetchUserData = async (userId) => {
 };
 
 export const checkIfCommunityExists = async (communityName) => {
-  const sanitizedCommunityName = communityName.toLowerCase().trim();
+  const sanitizedCommunityName = sanitizeString(communityName);
   const docSnapshot = await getDocumentFromCollection(
     'communityNames',
     sanitizedCommunityName
@@ -119,7 +120,7 @@ export const fetchCommunityPosts = (communityId) =>
 // Posting to db functions
 
 export const writeUsernameInDb = (username, userId) => {
-  const sanitizedUsername = username.toLowerCase();
+  const sanitizedUsername = sanitizeString(username);
   return Promise.all([
     setDoc(doc(db, 'usernames', sanitizedUsername), { userId }),
     setDoc(doc(db, 'users', userId), { username: username }),
@@ -127,7 +128,7 @@ export const writeUsernameInDb = (username, userId) => {
 };
 
 const saveUsername = (username, userId) => {
-  const sanitizedUsername = username.toLowerCase();
+  const sanitizedUsername = sanitizeString(username);
   setDoc(doc(db, 'usernames', sanitizedUsername), { userId });
 };
 
@@ -145,16 +146,17 @@ export const handleSignUpWithEmailAndPassword = (userId, userData) => {
 
 export const createCommunity = async (name) => {
   const docRef = createDocument('communities');
-  const sanitizedCommunityName = name.toLowerCase().trim();
+  const sanitizedName = sanitizeString(name);
 
   const newCommunity = {
     name,
+    sanitizedName,
     id: docRef.id,
   };
 
   return Promise.all([
     setDoc(docRef, newCommunity),
-    setDoc(doc(db, 'communityNames', sanitizedCommunityName), newCommunity),
+    setDoc(doc(db, 'communityNames', sanitizedName), newCommunity),
   ]);
 };
 
