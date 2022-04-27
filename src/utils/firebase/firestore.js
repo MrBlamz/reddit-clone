@@ -80,6 +80,16 @@ export const fetchPost = async (postId) => {
   return docSnapshot.exists() ? docSnapshot.data() : null;
 };
 
+export const fetchCommunitiesByName = (name) => {
+  const sanitizedName = sanitizeString(name);
+
+  return getDocumentsFromCollectionByConstraints(
+    'communities',
+    where('sanitizedName', '>=', sanitizedName),
+    where('sanitizedName', '<=', sanitizedName + '\uf8ff')
+  );
+};
+
 export const fetchPostComments = (postId) =>
   getDocumentsFromCollectionByConstraints(
     'comments',
