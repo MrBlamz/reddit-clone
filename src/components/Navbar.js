@@ -3,20 +3,17 @@ import {
   Flex,
   HStack,
   Image,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Link,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { IoSearchOutline } from 'react-icons/io5';
 import logo from '../assets/logo/logo.svg';
 import brandTextWhite from '../assets/logo/text_white_theme.svg';
 import brandTextDark from '../assets/logo/text_dark_theme.svg';
 import UserMenu from './UserMenu';
 import useModal from '../hooks/useModal';
 import { useUser } from '../hooks/useUser';
+import { SearchBar } from './SearchBar';
 
 const Logo = () => {
   const brandName = useColorModeValue(brandTextWhite, brandTextDark);
@@ -39,31 +36,6 @@ const Logo = () => {
         objectFit='fill'
       />
     </HStack>
-  );
-};
-
-const SearchBar = () => {
-  return (
-    <InputGroup
-      bg={useColorModeValue('brand.inputBgLight', 'brand.inputBgDark')}
-      borderColor={useColorModeValue('brand.borderLight', 'brand.borderDark')}
-      borderRadius='100%'
-      _hover={{
-        borderColor: useColorModeValue('brand.secondary', 'brand.light'),
-      }}
-    >
-      <InputLeftElement
-        pointerEvents='none'
-        color='brand.iconDark'
-        fontSize='1.5rem'
-        children={<IoSearchOutline />}
-      />
-      <Input
-        placeholder='Search Reddit'
-        focusBorderColor={useColorModeValue('brand.secondary', 'brand.light')}
-        _hover={{ outline: 'none' }}
-      />
-    </InputGroup>
   );
 };
 
