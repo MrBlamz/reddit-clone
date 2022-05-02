@@ -6,6 +6,7 @@ import Container from '../components/containers/Container';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
 import NoPosts from '../components/NoPosts';
+import { Fade } from '@chakra-ui/react';
 
 const Community = () => {
   const navigate = useNavigate();
@@ -57,7 +58,13 @@ const Community = () => {
 
   return (
     <Container>
-      {isLoading ? loadingPostCards : hasNoPosts ? <NoPosts /> : postCards}
+      {isLoading ? (
+        loadingPostCards
+      ) : hasNoPosts ? (
+        <NoPosts />
+      ) : (
+        <Fade in={!isLoading}>{postCards}</Fade>
+      )}
     </Container>
   );
 };

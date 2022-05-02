@@ -1,3 +1,4 @@
+import { Fade } from '@chakra-ui/react';
 import Container from '../components/containers/Container';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -50,7 +51,9 @@ const Home = () => {
 
   return (
     <>
-      <Container>{isLoading ? loadingCards : postCards}</Container>
+      <Container>
+        {isLoading ? loadingCards : <Fade in={!isLoading}>{postCards}</Fade>}
+      </Container>
     </>
   );
 };

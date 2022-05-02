@@ -1,4 +1,11 @@
-import { Box, Divider, Flex, Stack, useColorModeValue } from '@chakra-ui/react';
+import {
+  Box,
+  Divider,
+  Fade,
+  Flex,
+  Stack,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { useParams } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -110,15 +117,17 @@ const Post = () => {
       {isLoadingPost ? (
         <LoadingPost />
       ) : (
-        <PostContent
-          title={post.title}
-          author={post.author}
-          content={post.content}
-          commentsNumber={post.commentsNumber}
-          votes={post.votes}
-          timestamp={post.timestamp}
-          postId={postId}
-        />
+        <Fade in={!isLoadingPost}>
+          <PostContent
+            title={post.title}
+            author={post.author}
+            content={post.content}
+            commentsNumber={post.commentsNumber}
+            votes={post.votes}
+            timestamp={post.timestamp}
+            postId={postId}
+          />
+        </Fade>
       )}
 
       <CommentsSection>
@@ -140,15 +149,16 @@ const Post = () => {
         {!isLoadingComments &&
           comments.length &&
           comments.map((comment) => (
-            <Comment
-              key={comment.id}
-              commentId={comment.id}
-              isPostAuthor={comment.userId === post.userId}
-              author={comment.author}
-              content={comment.content}
-              votes={comment.votes}
-              timestamp={comment.timestamp}
-            />
+            <Fade key={comment.id} in={!isLoadingComments}>
+              <Comment
+                commentId={comment.id}
+                isPostAuthor={comment.userId === post.userId}
+                author={comment.author}
+                content={comment.content}
+                votes={comment.votes}
+                timestamp={comment.timestamp}
+              />
+            </Fade>
           ))}
 
         {!isLoadingComments && hasNoComments && <NoComments />}
