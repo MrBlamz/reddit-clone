@@ -9,6 +9,7 @@ import Community from './pages/Community';
 import Post from './pages/Post';
 import CreateCommunityModal from './components/CreateCommunityModal';
 import SubmitPost from './pages/SubmitPost';
+import { NotFound } from './pages/NotFound';
 
 function App() {
   const { fetchUserFromLocalStorage, listenForAuthChanges } = useAuth();
@@ -32,6 +33,7 @@ function App() {
           <Route path=':postId' element={<Post />} />
           <Route path='submit' element={<SubmitPost />} />
         </Route>
+        <Route path='*' element={<NotFound />} />
       </Routes>
       <AuthenticationModal />
       <CreateCommunityModal />
