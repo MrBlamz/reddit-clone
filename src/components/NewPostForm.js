@@ -87,11 +87,7 @@ const NewPostForm = () => {
         <Form>
           <VStack spacing={3}>
             <Field name='title' label='Post Title' hidden>
-              <Input
-                maxLength={21}
-                placeholder='Title'
-                disabled={!isLoggedIn}
-              />
+              <Input placeholder='Title' disabled={!isLoggedIn} />
             </Field>
 
             <Field name='content' label='Post Content' hidden>
