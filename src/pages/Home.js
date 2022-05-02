@@ -1,28 +1,27 @@
 import Container from '../components/containers/Container';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
-import { savePosts, selectPosts } from '../store/data';
 import { fetchPosts } from '../utils/firebase/firestore';
 
 const Home = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const posts = useSelector(selectPosts);
+  const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const getPostsFromDB = async () => {
+    const getPosts = async () => {
       setIsLoading(true);
+
       const data = await fetchPosts();
-      dispatch(savePosts(data));
+
+      setPosts(data);
       setIsLoading(false);
     };
 
-    getPostsFromDB();
-  }, [dispatch]);
+    getPosts();
+  }, []);
 
   const handleClick = (communityName, postId) => (event) => {
     event.stopPropagation();
