@@ -11,3 +11,4 @@ export const COLLECTIONS = {
   POST: 'posts',
   COMMENT: 'comments',
 };
+export const SORT_POSTS_OPTIONS = ['Top', 'Old', 'New'];
