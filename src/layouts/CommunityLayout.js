@@ -49,7 +49,11 @@ const CommunityLayout = () => {
   return communityData ? (
     <>
       <CommunityHeader communityName={communityData.name} />
-      <Outlet context={{ communityId: communityData.id }} />
+      <Outlet
+        context={{
+          ...communityData,
+        }}
+      />
     </>
   ) : (
     <Community404 />
