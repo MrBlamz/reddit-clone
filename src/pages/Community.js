@@ -1,19 +1,27 @@
 import { Box, Fade, Flex } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { fetchCommunityPosts } from '../utils/firebase/firestore';
+import {
+  fetchOrderedPostsByPostTime,
+  fetchOrderedPostsByVoteNumber,
+} from '../utils/firebase/firestore';
 import { isEmptyArray } from 'formik';
 import Container from '../components/containers/Container';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
 import NoPosts from '../components/NoPosts';
 import { AboutCommunity } from '../components/AboutCommunity';
+import { SORT_POSTS_OPTIONS } from '../constants';
+import { PostsSorter } from '../components/PostsSorter';
 
 const Community = () => {
   const navigate = useNavigate();
   const { id: communityId, timestamp, description } = useOutletContext();
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [selectedSortingMode, setSelectedSortingMode] = useState(
+    SORT_POSTS_OPTIONS[0]
+  );
   const hasNoPosts = isEmptyArray(posts);
 
   const handlePostClick = (postId) => (event) => {
@@ -40,12 +48,24 @@ const Community = () => {
     />
   ));
 
+  const fetchCommunityPostsFunctions = useMemo(
+    () => ({
+      [SORT_POSTS_OPTIONS[0]]: () => fetchOrderedPostsByVoteNumber(communityId),
+      [SORT_POSTS_OPTIONS[1]]: () =>
+        fetchOrderedPostsByPostTime(communityId, 'asc'),
+      [SORT_POSTS_OPTIONS[2]]: () =>
+        fetchOrderedPostsByPostTime(communityId, 'desc'),
+    }),
+    [communityId]
+  );
+
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchPostsBySelectedMode = async () => {
       setIsLoading(true);
 
       try {
-        const data = await fetchCommunityPosts(communityId);
+        const fetchPosts = fetchCommunityPostsFunctions[selectedSortingMode];
+        const data = await fetchPosts();
         setPosts(data);
       } catch (error) {
         console.log(error);
@@ -54,14 +74,21 @@ const Community = () => {
       setIsLoading(false);
     };
 
-    fetchPosts();
-  }, [communityId]);
+    fetchPostsBySelectedMode();
+  }, [selectedSortingMode, fetchCommunityPostsFunctions]);
 
   return (
     <Container>
       <Flex gap={3}>
         <Box w={hasNoPosts ? '100%' : '80%'}>
           <Flex direction='column' gap={2}>
+            {!hasNoPosts && (
+              <PostsSorter
+                selectedSortingMode={selectedSortingMode}
+                setSelectedSortingMode={setSelectedSortingMode}
+              />
+            )}
+
             {isLoading ? (
               loadingPostCards
             ) : hasNoPosts ? (
