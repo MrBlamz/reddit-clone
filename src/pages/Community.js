@@ -6,11 +6,12 @@ import Container from '../components/containers/Container';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
 import NoPosts from '../components/NoPosts';
-import { Fade } from '@chakra-ui/react';
+import { Fade, GridItem, SimpleGrid } from '@chakra-ui/react';
+import { AboutCommunity } from '../components/AboutCommunity';
 
 const Community = () => {
   const navigate = useNavigate();
-  const { id: communityId } = useOutletContext();
+  const { id: communityId, timestamp, description } = useOutletContext();
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const hasNoPosts = isEmptyArray(posts);
@@ -58,13 +59,26 @@ const Community = () => {
 
   return (
     <Container>
-      {isLoading ? (
-        loadingPostCards
-      ) : hasNoPosts ? (
-        <NoPosts />
-      ) : (
-        <Fade in={!isLoading}>{postCards}</Fade>
-      )}
+      <SimpleGrid columns={{ base: 1, md: 5 }} spacing={4}>
+        <GridItem
+          colSpan={{ base: 1, md: hasNoPosts ? 5 : 4 }}
+          order={{ base: 2, md: 1 }}
+        >
+          {isLoading ? (
+            loadingPostCards
+          ) : hasNoPosts ? (
+            <NoPosts />
+          ) : (
+            <Fade in={!isLoading}>{postCards}</Fade>
+          )}
+        </GridItem>
+
+        {!hasNoPosts && (
+          <GridItem colSpan={1} order={{ base: 1, md: 2 }}>
+            <AboutCommunity timestamp={timestamp} description={description} />
+          </GridItem>
+        )}
+      </SimpleGrid>
     </Container>
   );
 };
