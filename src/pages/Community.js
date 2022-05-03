@@ -1,3 +1,4 @@
+import { Box, Fade, Flex } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { fetchCommunityPosts } from '../utils/firebase/firestore';
@@ -6,7 +7,6 @@ import Container from '../components/containers/Container';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
 import NoPosts from '../components/NoPosts';
-import { Fade, GridItem, SimpleGrid } from '@chakra-ui/react';
 import { AboutCommunity } from '../components/AboutCommunity';
 
 const Community = () => {
@@ -59,26 +59,25 @@ const Community = () => {
 
   return (
     <Container>
-      <SimpleGrid columns={{ base: 1, md: 5 }} spacing={4}>
-        <GridItem
-          colSpan={{ base: 1, md: hasNoPosts ? 5 : 4 }}
-          order={{ base: 2, md: 1 }}
-        >
-          {isLoading ? (
-            loadingPostCards
-          ) : hasNoPosts ? (
-            <NoPosts />
-          ) : (
-            <Fade in={!isLoading}>{postCards}</Fade>
-          )}
-        </GridItem>
+      <Flex gap={3}>
+        <Box w={hasNoPosts ? '100%' : '80%'}>
+          <Flex direction='column' gap={2}>
+            {isLoading ? (
+              loadingPostCards
+            ) : hasNoPosts ? (
+              <NoPosts />
+            ) : (
+              <Fade in={!isLoading}>{postCards}</Fade>
+            )}
+          </Flex>
+        </Box>
 
-        {!hasNoPosts && (
-          <GridItem colSpan={1} order={{ base: 1, md: 2 }}>
+        <Box w={hasNoPosts ? '0' : '20%'}>
+          {!hasNoPosts && (
             <AboutCommunity timestamp={timestamp} description={description} />
-          </GridItem>
-        )}
-      </SimpleGrid>
+          )}
+        </Box>
+      </Flex>
     </Container>
   );
 };
