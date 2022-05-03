@@ -127,6 +127,21 @@ export const fetchCommunityPosts = (communityId) =>
     where('communityId', '==', communityId)
   );
 
+export const fetchOrderedPostsByVoteNumber = (communityId) =>
+  getDocumentsFromCollectionByConstraints(
+    'posts',
+    where('communityId', '==', communityId),
+    orderBy('votes', 'desc'),
+    orderBy('timestamp', 'desc')
+  );
+
+export const fetchOrderedPostsByPostTime = (communityId, options) =>
+  getDocumentsFromCollectionByConstraints(
+    'posts',
+    where('communityId', '==', communityId),
+    orderBy('timestamp', options)
+  );
+
 // Posting to db functions
 
 export const writeUsernameInDb = (username, userId) => {
