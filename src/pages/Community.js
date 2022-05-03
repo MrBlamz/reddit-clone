@@ -10,7 +10,7 @@ import { Fade } from '@chakra-ui/react';
 
 const Community = () => {
   const navigate = useNavigate();
-  const { communityId } = useOutletContext();
+  const { id: communityId } = useOutletContext();
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const hasNoPosts = isEmptyArray(posts);

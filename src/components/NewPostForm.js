@@ -55,7 +55,7 @@ const ErrorMessage = () => (
 const NewPostForm = () => {
   const navigate = useNavigate();
   const { isLoggedIn, userId, username } = useUser();
-  const { communityId } = useOutletContext();
+  const { id: communityId } = useOutletContext();
   const { communityName } = useParams();
 
   const handleFormSubmit = async (values) => {
