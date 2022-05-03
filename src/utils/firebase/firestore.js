@@ -154,13 +154,15 @@ export const handleSignUpWithEmailAndPassword = (userId, userData) => {
   ]);
 };
 
-export const createCommunity = async (name) => {
+export const createCommunity = async (name, description) => {
   const docRef = createDocument('communities');
   const sanitizedName = sanitizeString(name);
 
   const newCommunity = {
     name,
+    description,
     sanitizedName,
+    timestamp: Date.now(),
     id: docRef.id,
   };
 
