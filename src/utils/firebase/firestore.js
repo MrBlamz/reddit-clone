@@ -121,6 +121,19 @@ export const fetchOrderedCommentsByVoteNumber = (postId) =>
     orderBy('timestamp', 'desc')
   );
 
+export const fetchPostsByVoteNumber = () =>
+  getDocumentsFromCollectionByConstraints(
+    'posts',
+    orderBy('votes', 'desc'),
+    orderBy('timestamp', 'desc')
+  );
+
+export const fetchPostsByPostTime = (options) =>
+  getDocumentsFromCollectionByConstraints(
+    'posts',
+    orderBy('timestamp', options)
+  );
+
 export const fetchCommunityPostsByVoteNumber = (communityId) =>
   getDocumentsFromCollectionByConstraints(
     'posts',
