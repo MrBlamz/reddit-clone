@@ -1,30 +1,35 @@
 import { Box, Fade, Flex, useMediaQuery } from '@chakra-ui/react';
 import Container from '../components/containers/Container';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
-import { fetchPosts } from '../utils/firebase/firestore';
+import {
+  fetchPosts,
+  fetchPostsByPostTime,
+  fetchPostsByVoteNumber,
+} from '../utils/firebase/firestore';
 import { HomeBanner } from '../components/HomeBanner';
+import { PostsSorter } from '../components/PostsSorter';
+import { SORT_POSTS_OPTIONS } from '../constants';
 
 const Home = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [selectedSortingMode, setSelectedSortingMode] = useState(
+    SORT_POSTS_OPTIONS[0]
+  );
   const [isMobile] = useMediaQuery('(max-width: 62rem)');
 
-  useEffect(() => {
-    const getPosts = async () => {
-      setIsLoading(true);
-
-      const data = await fetchPosts();
-
-      setPosts(data);
-      setIsLoading(false);
-    };
-
-    getPosts();
-  }, []);
+  const fetchPostsFunctions = useMemo(
+    () => ({
+      [SORT_POSTS_OPTIONS[0]]: () => fetchPostsByVoteNumber(),
+      [SORT_POSTS_OPTIONS[1]]: () => fetchPostsByPostTime('asc'),
+      [SORT_POSTS_OPTIONS[2]]: () => fetchPostsByPostTime('desc'),
+    }),
+    []
+  );
 
   const handleClick = (communityName, postId) => (event) => {
     event.stopPropagation();
@@ -54,9 +59,16 @@ const Home = () => {
   const DesktopLayout = () => (
     <>
       <Box w='80%'>
-        {isLoading && loadingCards}
+        <Flex direction='column' gap={2}>
+          <PostsSorter
+            selectedSortingMode={selectedSortingMode}
+            setSelectedSortingMode={setSelectedSortingMode}
+          />
 
-        <Fade in={!isLoading}>{postCards}</Fade>
+          {isLoading && loadingCards}
+
+          <Fade in={!isLoading}>{postCards}</Fade>
+        </Flex>
       </Box>
 
       <Box w='20%'>
@@ -66,6 +78,24 @@ const Home = () => {
   );
 
   const MobileLayout = () => <Box>Mobile</Box>;
+
+  useEffect(() => {
+    const fetchPostsBySelectedMode = async () => {
+      setIsLoading(true);
+
+      try {
+        const fetchPosts = fetchPostsFunctions[selectedSortingMode];
+        const data = await fetchPosts();
+        setPosts(data);
+      } catch (error) {
+        console.log(error);
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchPostsBySelectedMode();
+  }, [fetchPostsFunctions, selectedSortingMode]);
 
   return (
     <Container>
