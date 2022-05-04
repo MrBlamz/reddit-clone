@@ -1,4 +1,4 @@
-import { Box, Fade, Flex } from '@chakra-ui/react';
+import { Box, Fade, Flex, useMediaQuery } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import {
@@ -23,6 +23,7 @@ const Community = () => {
     SORT_POSTS_OPTIONS[0]
   );
   const hasNoPosts = isEmptyArray(posts);
+  const [isMobile] = useMediaQuery('(max-width: 62rem)');
 
   const handlePostClick = (postId) => (event) => {
     navigate(`./${postId}`);
@@ -59,6 +60,57 @@ const Community = () => {
     [communityId]
   );
 
+  const DesktopLayout = () => (
+    <>
+      <Box w={hasNoPosts ? '100%' : '80%'}>
+        <Flex direction='column' gap={2}>
+          {!hasNoPosts && (
+            <PostsSorter
+              selectedSortingMode={selectedSortingMode}
+              setSelectedSortingMode={setSelectedSortingMode}
+            />
+          )}
+
+          {isLoading && loadingPostCards}
+
+          {!isLoading && hasNoPosts ? (
+            <NoPosts />
+          ) : (
+            <Fade in={true}>{postCards}</Fade>
+          )}
+        </Flex>
+      </Box>
+
+      <Box w={hasNoPosts ? '0' : '20%'}>
+        {!hasNoPosts && (
+          <AboutCommunity timestamp={timestamp} description={description} />
+        )}
+      </Box>
+    </>
+  );
+
+  const MobileLayout = () => (
+    <>
+      {!hasNoPosts && (
+        <>
+          <AboutCommunity timestamp={timestamp} description={description} />
+          <PostsSorter
+            selectedSortingMode={selectedSortingMode}
+            setSelectedSortingMode={setSelectedSortingMode}
+          />
+        </>
+      )}
+
+      {isLoading && loadingPostCards}
+
+      {!isLoading && hasNoPosts ? (
+        <NoPosts />
+      ) : (
+        <Fade in={true}>{postCards}</Fade>
+      )}
+    </>
+  );
+
   useEffect(() => {
     const fetchPostsBySelectedMode = async () => {
       setIsLoading(true);
@@ -79,31 +131,8 @@ const Community = () => {
 
   return (
     <Container>
-      <Flex gap={3}>
-        <Box w={hasNoPosts ? '100%' : '80%'}>
-          <Flex direction='column' gap={2}>
-            {!hasNoPosts && (
-              <PostsSorter
-                selectedSortingMode={selectedSortingMode}
-                setSelectedSortingMode={setSelectedSortingMode}
-              />
-            )}
-
-            {isLoading ? (
-              loadingPostCards
-            ) : hasNoPosts ? (
-              <NoPosts />
-            ) : (
-              <Fade in={!isLoading}>{postCards}</Fade>
-            )}
-          </Flex>
-        </Box>
-
-        <Box w={hasNoPosts ? '0' : '20%'}>
-          {!hasNoPosts && (
-            <AboutCommunity timestamp={timestamp} description={description} />
-          )}
-        </Box>
+      <Flex direction={isMobile ? 'column' : 'row'} gap={3}>
+        {isMobile ? <MobileLayout /> : <DesktopLayout />}
       </Flex>
     </Container>
   );
