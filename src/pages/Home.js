@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
 import { fetchPosts } from '../utils/firebase/firestore';
+import { HomeBanner } from '../components/HomeBanner';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -51,11 +52,17 @@ const Home = () => {
   ));
 
   const DesktopLayout = () => (
-    <Box w='full'>
-      {isLoading && loadingCards}
+    <>
+      <Box w='80%'>
+        {isLoading && loadingCards}
 
-      <Fade in={!isLoading}>{postCards}</Fade>
-    </Box>
+        <Fade in={!isLoading}>{postCards}</Fade>
+      </Box>
+
+      <Box w='20%'>
+        <HomeBanner />
+      </Box>
+    </>
   );
 
   const MobileLayout = () => <Box>Mobile</Box>;
