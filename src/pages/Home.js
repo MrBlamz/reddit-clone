@@ -1,4 +1,4 @@
-import { Fade } from '@chakra-ui/react';
+import { Box, Fade, Flex, useMediaQuery } from '@chakra-ui/react';
 import Container from '../components/containers/Container';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,8 +8,9 @@ import { fetchPosts } from '../utils/firebase/firestore';
 
 const Home = () => {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [isMobile] = useMediaQuery('(max-width: 62rem)');
 
   useEffect(() => {
     const getPosts = async () => {
@@ -30,7 +31,7 @@ const Home = () => {
   };
 
   const loadingCards = [...Array(10)].map((v, i) => (
-    <LoadingPostCard key={i} />
+    <LoadingPostCard w='full' key={i} />
   ));
 
   const postCards = posts.map((post, i) => (
@@ -49,12 +50,22 @@ const Home = () => {
     />
   ));
 
+  const DesktopLayout = () => (
+    <Box w='full'>
+      {isLoading && loadingCards}
+
+      <Fade in={!isLoading}>{postCards}</Fade>
+    </Box>
+  );
+
+  const MobileLayout = () => <Box>Mobile</Box>;
+
   return (
-    <>
-      <Container>
-        {isLoading ? loadingCards : <Fade in={!isLoading}>{postCards}</Fade>}
-      </Container>
-    </>
+    <Container>
+      <Flex direction={isMobile ? 'column' : 'row'} gap={3}>
+        {isMobile ? <MobileLayout /> : <DesktopLayout />}
+      </Flex>
+    </Container>
   );
 };
 
