@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import LoadingPostCard from '../components/LoadingPostCard';
 import PostCard from '../components/PostCard';
 import {
-  fetchPosts,
   fetchPostsByPostTime,
   fetchPostsByVoteNumber,
 } from '../utils/firebase/firestore';
@@ -77,7 +76,19 @@ const Home = () => {
     </>
   );
 
-  const MobileLayout = () => <Box>Mobile</Box>;
+  const MobileLayout = () => (
+    <>
+      <HomeBanner />
+      <PostsSorter
+        selectedSortingMode={selectedSortingMode}
+        setSelectedSortingMode={setSelectedSortingMode}
+      />
+
+      {isLoading && loadingCards}
+
+      <Fade in={!isLoading}>{postCards}</Fade>
+    </>
+  );
 
   useEffect(() => {
     const fetchPostsBySelectedMode = async () => {
