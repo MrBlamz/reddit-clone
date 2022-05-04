@@ -121,13 +121,7 @@ export const fetchOrderedCommentsByVoteNumber = (postId) =>
     orderBy('timestamp', 'desc')
   );
 
-export const fetchCommunityPosts = (communityId) =>
-  getDocumentsFromCollectionByConstraints(
-    'posts',
-    where('communityId', '==', communityId)
-  );
-
-export const fetchOrderedPostsByVoteNumber = (communityId) =>
+export const fetchCommunityPostsByVoteNumber = (communityId) =>
   getDocumentsFromCollectionByConstraints(
     'posts',
     where('communityId', '==', communityId),
@@ -135,7 +129,7 @@ export const fetchOrderedPostsByVoteNumber = (communityId) =>
     orderBy('timestamp', 'desc')
   );
 
-export const fetchOrderedPostsByPostTime = (communityId, options) =>
+export const fetchCommunityPostsByPostTime = (communityId, options) =>
   getDocumentsFromCollectionByConstraints(
     'posts',
     where('communityId', '==', communityId),

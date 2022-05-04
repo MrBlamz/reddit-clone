@@ -2,8 +2,8 @@ import { Box, Fade, Flex, useMediaQuery } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import {
-  fetchOrderedPostsByPostTime,
-  fetchOrderedPostsByVoteNumber,
+  fetchCommunityPostsByPostTime,
+  fetchCommunityPostsByVoteNumber,
 } from '../utils/firebase/firestore';
 import { isEmptyArray } from 'formik';
 import Container from '../components/containers/Container';
@@ -51,11 +51,12 @@ const Community = () => {
 
   const fetchCommunityPostsFunctions = useMemo(
     () => ({
-      [SORT_POSTS_OPTIONS[0]]: () => fetchOrderedPostsByVoteNumber(communityId),
+      [SORT_POSTS_OPTIONS[0]]: () =>
+        fetchCommunityPostsByVoteNumber(communityId),
       [SORT_POSTS_OPTIONS[1]]: () =>
-        fetchOrderedPostsByPostTime(communityId, 'asc'),
+        fetchCommunityPostsByPostTime(communityId, 'asc'),
       [SORT_POSTS_OPTIONS[2]]: () =>
-        fetchOrderedPostsByPostTime(communityId, 'desc'),
+        fetchCommunityPostsByPostTime(communityId, 'desc'),
     }),
     [communityId]
   );
