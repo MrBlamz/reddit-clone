@@ -62,14 +62,28 @@ export const fetchUserData = async (userId) => {
   return docSnapshot.exists() && docSnapshot.data();
 };
 
-export const checkIfCommunityExists = async (communityName) => {
+export const fetchCommunityId = async (communityName) => {
   const sanitizedCommunityName = sanitizeString(communityName);
+
   const docSnapshot = await getDocumentFromCollection(
     'communityNames',
     sanitizedCommunityName
   );
 
-  return docSnapshot.exists() ? docSnapshot.data() : null;
+  return docSnapshot.exists() ? docSnapshot.data().id : null;
+};
+
+export const fetchCommunityData = async (communityName) => {
+  const communityId = await fetchCommunityId(communityName);
+
+  if (!communityId) return;
+
+  const docSnapshot = await getDocumentFromCollection(
+    'communities',
+    communityId
+  );
+
+  return docSnapshot.exists() && docSnapshot.data();
 };
 
 export const fetchPosts = () => getCollection('posts');

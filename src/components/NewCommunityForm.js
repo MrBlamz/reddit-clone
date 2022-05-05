@@ -14,10 +14,7 @@ import { useState } from 'react';
 import { IoInformationCircleOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import {
-  checkIfCommunityExists,
-  createCommunity,
-} from '../utils/firebase/firestore';
+import { fetchCommunityId, createCommunity } from '../utils/firebase/firestore';
 import AutoResizeTextArea from './AutoResizeTextArea';
 import InputWithPermanentPlaceholder from './forms/InputWithPermanentPlaceholder';
 import TouchFriendlyTooltip from './TouchFriendlyTooltip';
@@ -67,9 +64,9 @@ const NewCommunityForm = ({ innerRef, onClose }) => {
     const { name, description } = values;
 
     try {
-      const communityData = await checkIfCommunityExists(name);
+      const communityId = await fetchCommunityId(name);
 
-      if (communityData) {
+      if (communityId) {
         actions.setFieldError(
           'name',
           `Sorry, r/${name} is taken. Try another.`
