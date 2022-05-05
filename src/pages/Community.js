@@ -16,7 +16,12 @@ import { PostsSorter } from '../components/PostsSorter';
 
 const Community = () => {
   const navigate = useNavigate();
-  const { id: communityId, timestamp, description } = useOutletContext();
+  const {
+    id: communityId,
+    timestamp,
+    description,
+    members,
+  } = useOutletContext();
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [selectedSortingMode, setSelectedSortingMode] = useState(
@@ -84,7 +89,11 @@ const Community = () => {
 
       <Box w={hasNoPosts ? '0' : '20%'}>
         {!hasNoPosts && (
-          <AboutCommunity timestamp={timestamp} description={description} />
+          <AboutCommunity
+            timestamp={timestamp}
+            description={description}
+            memberCount={members}
+          />
         )}
       </Box>
     </>
@@ -94,7 +103,11 @@ const Community = () => {
     <>
       {!hasNoPosts && (
         <>
-          <AboutCommunity timestamp={timestamp} description={description} />
+          <AboutCommunity
+            timestamp={timestamp}
+            description={description}
+            memberCount={members}
+          />
           <PostsSorter
             selectedSortingMode={selectedSortingMode}
             setSelectedSortingMode={setSelectedSortingMode}

@@ -11,7 +11,12 @@ import { format } from 'date-fns';
 import { GiCakeSlice } from 'react-icons/gi';
 import { useNavigate } from 'react-router-dom';
 
-export const AboutCommunity = ({ description, timestamp, ...props }) => {
+export const AboutCommunity = ({
+  description,
+  timestamp,
+  memberCount,
+  ...props
+}) => {
   const navigate = useNavigate();
   const creationDateAsString = format(timestamp, 'MMM d,yyyy');
 
@@ -35,6 +40,14 @@ export const AboutCommunity = ({ description, timestamp, ...props }) => {
           About Community
         </Text>
         <Text>{description}</Text>
+        <Flex direction='column' justifyContent='center' alignItems='center'>
+          <Text fontWeight='bold' fontSize={16}>
+            {memberCount}
+          </Text>
+          <Text fontWeight='bold' fontSize={12}>
+            {memberCount === 1 ? 'Member' : 'Members'}
+          </Text>
+        </Flex>
         <Divider />
         <Flex alignItems='center'>
           <Icon as={GiCakeSlice} transform='rotateY(180deg)' boxSize={6} />
