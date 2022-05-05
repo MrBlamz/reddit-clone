@@ -1,4 +1,10 @@
-import { Box, Heading } from '@chakra-ui/react';
+import {
+  Avatar,
+  Heading,
+  HStack,
+  useBreakpointValue,
+  useColorModeValue,
+} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const CommunityHeader = ({ communityName }) => {
@@ -7,21 +13,27 @@ const CommunityHeader = ({ communityName }) => {
   const handleClick = () => navigate(`/r/${communityName}`);
 
   return (
-    <Box
+    <HStack
       as='header'
+      spacing={{ base: 3, md: 6 }}
+      px={{ base: 3, md: 7 }}
       py={{ base: 5, md: 7 }}
-      bg='green.400'
+      bg={useColorModeValue('brand.secondary', 'brand.primary')}
       onClick={handleClick}
       _hover={{ cursor: 'pointer' }}
     >
-      <Heading
-        mx={{ base: 3, md: 72 }}
-        fontSize={{ base: 20, md: 22 }}
-        color='white'
-      >
+      <Avatar
+        name={communityName}
+        size={useBreakpointValue({ base: 'md', md: 'lg' })}
+        border={`2px solid ${useColorModeValue('white', 'black')}`}
+        bg={useColorModeValue('black', 'white')}
+        color={useColorModeValue('white', 'black')}
+        fontWeight='bold'
+      />
+      <Heading fontSize={{ base: 20, md: 22 }} color='brand.inputBgLight'>
         {communityName}
       </Heading>
-    </Box>
+    </HStack>
   );
 };
 
