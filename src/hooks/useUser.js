@@ -32,6 +32,16 @@ export const useUser = () => {
     dispatch(userActions.deleteCommentVote(payload));
   };
 
+  const followCommunity = (communityId) => {
+    const payload = { communityId };
+    dispatch(userActions.followCommunity(payload));
+  };
+
+  const unfollowCommunity = (communityId) => {
+    const payload = { communityId };
+    dispatch(userActions.unfollowCommunity(payload));
+  };
+
   return {
     isLoggedIn,
     userId,
@@ -40,5 +50,7 @@ export const useUser = () => {
     deletePostVote,
     addCommentVote,
     deleteCommentVote,
+    followCommunity,
+    unfollowCommunity,
   };
 };
