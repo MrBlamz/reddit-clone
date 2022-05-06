@@ -46,7 +46,7 @@ const CommunityLayout = () => {
 
   return communityData ? (
     <>
-      <CommunityHeader communityName={communityData.name} />
+      <CommunityHeader {...communityData} setCommunityData={setCommunityData} />
       <Outlet
         context={{
           ...communityData,
