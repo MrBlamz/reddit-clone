@@ -10,7 +10,13 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
-import { ADD_VOTE, DELETE_VOTE, SWAP_VOTE } from '../../constants';
+import {
+  ADD_VOTE,
+  DELETE_VOTE,
+  SWAP_VOTE,
+  FOLLOW_COMMUNITY,
+  UNFOLLOW_COMMUNITY,
+} from '../../constants';
 import app from '../../firebase.config';
 import { sanitizeString } from '../string';
 
@@ -198,13 +204,14 @@ export const createCommunity = async (name, description) => {
     name,
     description,
     sanitizedName,
+    members: 0,
     timestamp: Date.now(),
     id: docRef.id,
   };
 
   return Promise.all([
     setDoc(docRef, newCommunity),
-    setDoc(doc(db, 'communityNames', sanitizedName), newCommunity),
+    setDoc(doc(db, 'communityNames', sanitizedName), { id: docRef.id }),
   ]);
 };
 
@@ -254,8 +261,8 @@ export const createComment = async (content, author, userId, postId) => {
   return newComment;
 };
 
-const updateUserVotes = (userDataDoc, collection, operationType, id, vote) => {
-  switch (operationType) {
+const updateUserVotes = (userDataDoc, collection, action, id, vote) => {
+  switch (action) {
     case ADD_VOTE:
     case SWAP_VOTE:
       return { ...userDataDoc.data().votes[collection], [id]: vote };
@@ -270,13 +277,7 @@ const updateUserVotes = (userDataDoc, collection, operationType, id, vote) => {
   }
 };
 
-export const handleVote = async (
-  collection,
-  operationType,
-  vote,
-  userId,
-  id
-) => {
+export const handleVote = async (collection, action, vote, userId, id) => {
   const OPTIONS = {
     [ADD_VOTE]: (doc) => (vote ? doc.data().votes + 1 : doc.data().votes - 1),
     [DELETE_VOTE]: (doc) =>
@@ -291,13 +292,13 @@ export const handleVote = async (
     return await runTransaction(db, async (transaction) => {
       const userDataDoc = await transaction.get(userDataRef);
       const doc = await transaction.get(docRef);
-      const handleVote = OPTIONS[operationType];
+      const handleVote = OPTIONS[action];
 
       const updatedVoteNumber = handleVote(doc);
       const updatedUserVotes = updateUserVotes(
         userDataDoc,
         collection,
-        operationType,
+        action,
         id,
         vote
       );
@@ -308,6 +309,60 @@ export const handleVote = async (
       });
 
       return updatedVoteNumber;
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+const updateUserFollowingCommunities = (userDataDoc, action, communityId) => {
+  switch (action) {
+    case FOLLOW_COMMUNITY:
+      return {
+        ...userDataDoc.data().following.communities,
+        [communityId]: true,
+      };
+
+    case UNFOLLOW_COMMUNITY:
+      const userCommunities = { ...userDataDoc.data().following.communities };
+      delete userCommunities[communityId];
+      return userCommunities;
+
+    default:
+      return { ...userDataDoc.data().following.communities };
+  }
+};
+
+export const handleFollowingCommunity = async (action, communityId, userId) => {
+  const OPTIONS = {
+    [FOLLOW_COMMUNITY]: (doc) => doc.data().members + 1,
+    [UNFOLLOW_COMMUNITY]: (doc) => doc.data().members - 1,
+  };
+
+  const userDataRef = doc(db, 'users', userId);
+  const communityDocRef = doc(db, 'communities', communityId);
+
+  try {
+    return await runTransaction(db, async (transaction) => {
+      const userDataDoc = await transaction.get(userDataRef);
+      const communityDoc = await transaction.get(communityDocRef);
+      const handleAction = OPTIONS[action];
+
+      const updatedCommunityMemberCount = handleAction(communityDoc);
+      const updatedUserFollowingCommunities = updateUserFollowingCommunities(
+        userDataDoc,
+        action,
+        communityId
+      );
+
+      transaction.update(communityDocRef, {
+        members: updatedCommunityMemberCount,
+      });
+      transaction.update(userDataRef, {
+        'following.communities': updatedUserFollowingCommunities,
+      });
+
+      return updatedCommunityMemberCount;
     });
   } catch (error) {
     return Promise.reject(error);
