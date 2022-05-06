@@ -12,3 +12,7 @@ export const COLLECTIONS = {
   COMMENT: 'comments',
 };
 export const SORT_POSTS_OPTIONS = ['Top', 'Old', 'New'];
+export const FOLLOW_COMMUNITY = 'followCommunity';
+export const UNFOLLOW_COMMUNITY = 'unfollowCommunity';
+export const FOLLOW_COMMUNITY_MESSAGE = 'Successfully joined';
+export const UNFOLLOW_COMMUNITY_MESSAGE = 'Successfully left';
