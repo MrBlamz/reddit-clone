@@ -6,6 +6,9 @@ export const USER_DATA = {
     posts: {},
     comments: {},
   },
+  following: {
+    communities: {},
+  },
 };
 
 const initialState = {
@@ -55,6 +58,19 @@ const authSlice = createSlice({
       const { commentId } = action.payload;
       delete state.userData.votes.comments[commentId];
     },
+
+    followCommunity: (state, action) => {
+      const { communityId } = action.payload;
+      state.userData.following.communities = {
+        ...state.userData.following.communities,
+        [communityId]: true,
+      };
+    },
+
+    unfollowCommunity: (state, action) => {
+      const { communityId } = action.payload;
+      delete state.userData.following.communities[communityId];
+    },
   },
 });
 
@@ -75,6 +91,12 @@ export const selectUserId = createSelector(
   (state) => state.auth,
   (auth) => auth.user?.uid
 );
+
+export const selectFollowingCommunity = (communityId) =>
+  createSelector(
+    (state) => state.auth.userData,
+    (userData) => userData.following.communities[communityId]
+  );
 
 export const selectPostVote = (postId) =>
   createSelector(
