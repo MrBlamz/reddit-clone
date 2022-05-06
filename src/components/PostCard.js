@@ -12,7 +12,7 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { BiShare } from 'react-icons/bi';
 import { BsArrowsAngleExpand, BsBookmark, BsCardText } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
@@ -50,10 +50,15 @@ const DocumentIcon = ({ ...rest }) => (
 
 const Header = ({ title, communityName, author, elapsedTime }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClick = (event) => {
     event.stopPropagation();
-    navigate(`/r/${communityName}`);
+
+    const currentPath = location.pathname;
+    const newPath = `/r/${communityName}`;
+
+    if (currentPath !== newPath) navigate(newPath);
   };
 
   return (
