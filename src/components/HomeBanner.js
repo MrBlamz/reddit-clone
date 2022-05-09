@@ -10,11 +10,22 @@ import {
 import banner from '../assets/homeBanner.png';
 import mascotImage from '../assets/snoo.png';
 import useModal from '../hooks/useModal';
+import { useUser } from '../hooks/useUser';
 import { useNotification } from '../hooks/useNotification';
 
 export const HomeBanner = (props) => {
   const { onOpen } = useModal('CreateCommunityModal');
+  const { isLoggedIn } = useUser();
   const { sendNotification } = useNotification();
+
+  const handleCreateCommunityButtonClick = () => {
+    if (!isLoggedIn) {
+      sendNotification('warning', 'Login to create a community.');
+      return;
+    }
+
+    onOpen();
+  };
 
   const handleCreatePostButtonClick = () =>
     sendNotification('warning', 'Work in progress.');
@@ -41,7 +52,11 @@ export const HomeBanner = (props) => {
             Your personal Reddit frontpage. Come here to check in with your
             favorite communities.
           </Text>
-          <Button w='full' variant='primary' onClick={onOpen}>
+          <Button
+            w='full'
+            variant='primary'
+            onClick={handleCreateCommunityButtonClick}
+          >
             Create Community
           </Button>
           <Button
