@@ -98,6 +98,11 @@ export const selectFollowingCommunity = (communityId) =>
     (userData) => userData.following.communities[communityId]
   );
 
+export const selectFollowingCommunities = createSelector(
+  (state) => state.auth.userData,
+  (userData) => userData.following.communities
+);
+
 export const selectPostVote = (postId) =>
   createSelector(
     (state) => state.auth.userData,
