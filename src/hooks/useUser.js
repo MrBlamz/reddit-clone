@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   actions as userActions,
   selectAuthStatus,
+  selectFollowingCommunities,
   selectUserId,
   selectUsername,
 } from '../store/auth';
@@ -11,6 +12,7 @@ export const useUser = () => {
   const isLoggedIn = useSelector(selectAuthStatus);
   const userId = useSelector(selectUserId);
   const username = useSelector(selectUsername);
+  const followingCommunities = useSelector(selectFollowingCommunities);
 
   const addPostVote = (vote, postId) => {
     const payload = { vote, postId };
@@ -46,6 +48,7 @@ export const useUser = () => {
     isLoggedIn,
     userId,
     username,
+    followingCommunities,
     addPostVote,
     deletePostVote,
     addCommentVote,
