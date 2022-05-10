@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useParams } from 'react-router-dom';
-import { fetchCommunityData } from '../utils/firebase/firestore';
+import {
+  fetchCommunityData,
+  fetchCommunityId,
+} from '../utils/firebase/firestore';
 import { Center } from '@chakra-ui/react';
 import SpinningLogo from '../components/loaders/SpinningLogo';
 import CommunityHeader from '../components/CommunityHeader';
@@ -16,7 +19,8 @@ const CommunityLayout = () => {
       setIsLoading(true);
 
       try {
-        const data = await fetchCommunityData(communityName);
+        const communityId = await fetchCommunityId(communityName);
+        const data = await fetchCommunityData(communityId);
 
         if (data) setCommunityData(data);
       } catch (error) {
