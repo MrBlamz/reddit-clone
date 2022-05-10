@@ -79,11 +79,7 @@ export const fetchCommunityId = async (communityName) => {
   return docSnapshot.exists() ? docSnapshot.data().id : null;
 };
 
-export const fetchCommunityData = async (communityName) => {
-  const communityId = await fetchCommunityId(communityName);
-
-  if (!communityId) return;
-
+export const fetchCommunityData = async (communityId) => {
   const docSnapshot = await getDocumentFromCollection(
     'communities',
     communityId
