@@ -31,8 +31,8 @@ function App() {
         <Route path='r/:communityName' element={<CommunityLayout />}>
           <Route index element={<Community />} />
           <Route path=':postId' element={<Post />} />
-          <Route path='submit' element={<SubmitPost />} />
         </Route>
+        <Route path='submit' element={<SubmitPost />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
       <AuthenticationModal />
