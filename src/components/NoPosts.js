@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const NoPosts = () => {
   const navigate = useNavigate();
 
-  const handleClick = () => navigate('submit');
+  const handleClick = () => navigate('/submit');
 
   return (
     <Center

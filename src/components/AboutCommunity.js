@@ -20,7 +20,7 @@ export const AboutCommunity = ({
   const navigate = useNavigate();
   const creationDateAsString = format(timestamp, 'MMM d,yyyy');
 
-  const handleClick = () => navigate('submit');
+  const handleClick = () => navigate('/submit');
 
   return (
     <Flex

@@ -12,8 +12,10 @@ import mascotImage from '../assets/snoo.png';
 import useModal from '../hooks/useModal';
 import { useUser } from '../hooks/useUser';
 import { useNotification } from '../hooks/useNotification';
+import { useNavigate } from 'react-router-dom';
 
 export const HomeBanner = (props) => {
+  const navigate = useNavigate();
   const { onOpen } = useModal('CreateCommunityModal');
   const { isLoggedIn } = useUser();
   const { sendNotification } = useNotification();
@@ -27,8 +29,7 @@ export const HomeBanner = (props) => {
     onOpen();
   };
 
-  const handleCreatePostButtonClick = () =>
-    sendNotification('warning', 'Work in progress.');
+  const handleCreatePostButtonClick = () => navigate('/submit');
 
   return (
     <Flex
