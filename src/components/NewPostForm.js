@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Flex,
   FormControl,
@@ -7,11 +8,13 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
-import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { useUser } from '../hooks/useUser';
 import { createPost } from '../utils/firebase/firestore';
 import AutoResizeTextArea from './AutoResizeTextArea';
+import { CommunitySelector } from './CommunitySelector';
 import Field from './forms/Field';
 
 const validationSchema = yup.object({
@@ -44,10 +47,10 @@ const LoginMessage = () => (
   </FormControl>
 );
 
-const ErrorMessage = () => (
+const ErrorMessage = ({ message }) => (
   <FormControl isInvalid>
     <FormErrorMessage fontWeight='bold' fontSize={12}>
-      Please fix the above requirements
+      {message}
     </FormErrorMessage>
   </FormControl>
 );
@@ -55,13 +58,17 @@ const ErrorMessage = () => (
 const NewPostForm = () => {
   const navigate = useNavigate();
   const { isLoggedIn, userId, username } = useUser();
-  const { id: communityId } = useOutletContext();
-  const { communityName } = useParams();
+  const [community, setCommunity] = useState(null);
 
   const handleFormSubmit = async (values) => {
     const { title, content } = values;
 
+    if (!community) {
+      return;
+    }
+
     try {
+      const { name: communityName, id: communityId } = community;
       const postId = await createPost(
         title,
         userId,
@@ -77,6 +84,10 @@ const NewPostForm = () => {
     }
   };
 
+  const handleCommunitySelect = (selectedCommunity) => {
+    setCommunity(selectedCommunity);
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -85,7 +96,11 @@ const NewPostForm = () => {
     >
       {(props) => (
         <Form>
-          <VStack spacing={3}>
+          <VStack spacing={3} alignItems='flex-start'>
+            <Box w={{ base: 'full', lg: 300 }}>
+              <CommunitySelector onSelect={handleCommunitySelect} />
+            </Box>
+
             <Field name='title' label='Post Title' hidden>
               <Input placeholder='Title' disabled={!isLoggedIn} />
             </Field>
@@ -112,14 +127,16 @@ const NewPostForm = () => {
                 w='100px'
                 fontSize={14}
                 isLoading={props.isSubmitting}
-                isDisabled={!isLoggedIn || hasErrors(props)}
+                isDisabled={!isLoggedIn || hasErrors(props) || !community}
               >
                 Post
               </Button>
 
               {!isLoggedIn && <LoginMessage />}
 
-              {isLoggedIn && hasErrors(props) && <ErrorMessage />}
+              {isLoggedIn && hasErrors(props) && (
+                <ErrorMessage message='Please fix the above requirements' />
+              )}
             </Flex>
           </VStack>
         </Form>
