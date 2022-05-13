@@ -11,9 +11,11 @@ import {
 import { HomeBanner } from '../components/HomeBanner';
 import { PostsSorter } from '../components/PostsSorter';
 import { SORT_POSTS_OPTIONS } from '../constants';
+import { useUser } from '../hooks/useUser';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { isLoggedIn, followingCommunities } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [selectedSortingMode, setSelectedSortingMode] = useState(
@@ -23,11 +25,20 @@ const Home = () => {
 
   const fetchPostsFunctions = useMemo(
     () => ({
-      [SORT_POSTS_OPTIONS[0]]: () => fetchPostsByVoteNumber(),
-      [SORT_POSTS_OPTIONS[1]]: () => fetchPostsByPostTime('asc'),
-      [SORT_POSTS_OPTIONS[2]]: () => fetchPostsByPostTime('desc'),
+      [SORT_POSTS_OPTIONS[0]]: () =>
+        isLoggedIn
+          ? fetchPostsByVoteNumber(followingCommunities)
+          : fetchPostsByVoteNumber(),
+      [SORT_POSTS_OPTIONS[1]]: () =>
+        isLoggedIn
+          ? fetchPostsByPostTime('asc', followingCommunities)
+          : fetchPostsByPostTime('asc'),
+      [SORT_POSTS_OPTIONS[2]]: () =>
+        isLoggedIn
+          ? fetchPostsByPostTime('desc', followingCommunities)
+          : fetchPostsByPostTime('desc'),
     }),
-    []
+    [isLoggedIn, followingCommunities]
   );
 
   const handleClick = (communityName, postId) => (event) => {
