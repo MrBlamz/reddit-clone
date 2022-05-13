@@ -9,10 +9,9 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BiShare } from 'react-icons/bi';
 import { BsBookmark } from 'react-icons/bs';
-import { MdOutlineEdit } from 'react-icons/md';
 import { VscComment } from 'react-icons/vsc';
 import { getElapsedTimeAsString } from '../utils/date';
 import ActionButton from './buttons/ActionButton';
@@ -64,7 +63,7 @@ const ButtonsContainer = ({ children }) => {
   );
 };
 
-const VoteButtons = ({ votes, postId }) => (
+const VoteButtons = ({ votes, postId, onClick }) => (
   <PostVotingButtons
     fontSize='14px'
     votesNumber={votes}
@@ -75,6 +74,7 @@ const VoteButtons = ({ votes, postId }) => (
     position={{ base: 'static', md: 'absolute' }}
     top={2}
     left={2}
+    onClick={onClick}
   />
 );
 
@@ -88,6 +88,7 @@ const Post = ({
   postId,
 }) => {
   const [isMobile] = useMediaQuery('(max-width: 48rem)');
+  const [votesNumber, setVotesNumber] = useState(votes);
 
   const buttons = useMemo(() => {
     const ACTION_BUTTONS = [
@@ -130,7 +131,11 @@ const Post = ({
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
       <ButtonsContainer>
-        <VoteButtons votes={votes} postId={postId} />
+        <VoteButtons
+          votes={votesNumber}
+          postId={postId}
+          onClick={setVotesNumber}
+        />
         {buttons}
       </ButtonsContainer>
     </Container>
@@ -138,7 +143,11 @@ const Post = ({
 
   const DesktopLayout = () => (
     <Container position='relative'>
-      <VoteButtons votes={votes} postId={postId} />
+      <VoteButtons
+        votes={votesNumber}
+        postId={postId}
+        onClick={setVotesNumber}
+      />
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
       <ButtonsContainer>{buttons}</ButtonsContainer>

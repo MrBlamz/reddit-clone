@@ -92,6 +92,11 @@ const Post = () => {
   // Set sort comments mode to recent if not already when a new comment is submitted
   // If mode is recent already run fetch function instead
   const handleCommentSubmit = async () => {
+    setPost((prevState) => ({
+      ...prevState,
+      commentsNumber: prevState.commentsNumber + 1,
+    }));
+
     if (sortCommentsMode === 'Recent') {
       fetchCommentsData();
       return;

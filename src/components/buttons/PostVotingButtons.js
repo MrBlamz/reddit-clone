@@ -17,7 +17,12 @@ import { selectPostVote } from '../../store/auth';
 import { handleVote as handleVoteOnServer } from '../../utils/firebase/firestore';
 import VotingButtons from './VotingButtons';
 
-export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
+export const PostVotingButtons = ({
+  postId,
+  votesNumber,
+  onClick,
+  ...props
+}) => {
   const userVote = useSelector(selectPostVote(postId));
   const [votes, setVotes] = useState(votesNumber);
   const { isLoggedIn, userId, addPostVote, deletePostVote } = useUser();
@@ -69,6 +74,7 @@ export const PostVotingButtons = ({ postId, votesNumber, ...props }) => {
     await handleVote();
     setVotes(updatedVotesNumber);
     sendNotification('success', message);
+    if (onClick) onClick(updatedVotesNumber);
   };
 
   const handleClick = (vote) => async (event) => {

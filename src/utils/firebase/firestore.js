@@ -4,10 +4,12 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  increment,
   orderBy,
   query,
   runTransaction,
   setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { isEmpty } from 'lodash';
@@ -254,7 +256,8 @@ export const createPost = async (
 };
 
 export const createComment = async (content, author, userId, postId) => {
-  const docRef = createDocument('comments');
+  const postRef = doc(db, 'posts', postId);
+  const commentRef = createDocument('comments');
 
   const newComment = {
     author,
@@ -263,10 +266,13 @@ export const createComment = async (content, author, userId, postId) => {
     postId,
     votes: 0,
     timestamp: Date.now(),
-    id: docRef.id,
+    id: commentRef.id,
   };
 
-  await setDoc(docRef, newComment);
+  await setDoc(commentRef, newComment);
+  await updateDoc(postRef, {
+    commentsNumber: increment(1),
+  });
 
   return newComment;
 };
