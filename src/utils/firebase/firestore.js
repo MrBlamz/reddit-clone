@@ -384,3 +384,11 @@ export const handleFollowingCommunity = async (action, communityId, userId) => {
     return Promise.reject(error);
   }
 };
+
+export const updatePostContent = async (content, postId) => {
+  const postRef = doc(db, 'posts', postId);
+
+  return updateDoc(postRef, {
+    content,
+  });
+};
