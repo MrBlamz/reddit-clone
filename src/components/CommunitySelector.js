@@ -160,12 +160,11 @@ export const CommunitySelector = ({ onSelect, ...props }) => {
 
   useEffect(() => {
     const fetchUserCommunitiesData = async () => {
-      const communitiesData = [];
-
-      for (const communityId in followingCommunities) {
-        const communityData = await fetchCommunityData(communityId);
-        communitiesData.push(communityData);
-      }
+      const communitiesData = await Promise.all(
+        followingCommunities.map(
+          async (communityId) => await fetchCommunityData(communityId)
+        )
+      );
 
       setState((prevState) => ({
         ...prevState,
