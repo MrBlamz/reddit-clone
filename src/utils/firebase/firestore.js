@@ -10,6 +10,7 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
+import { isEmpty } from 'lodash';
 import {
   ADD_VOTE,
   DELETE_VOTE,
@@ -137,18 +138,31 @@ export const fetchOrderedCommentsByVoteNumber = (postId) =>
     orderBy('timestamp', 'desc')
   );
 
-export const fetchPostsByVoteNumber = () =>
-  getDocumentsFromCollectionByConstraints(
-    'posts',
-    orderBy('votes', 'desc'),
-    orderBy('timestamp', 'desc')
-  );
+export const fetchPostsByVoteNumber = (communities) =>
+  communities && !isEmpty(communities)
+    ? getDocumentsFromCollectionByConstraints(
+        'posts',
+        where('communityId', 'in', communities),
+        orderBy('votes', 'desc'),
+        orderBy('timestamp', 'desc')
+      )
+    : getDocumentsFromCollectionByConstraints(
+        'posts',
+        orderBy('votes', 'desc'),
+        orderBy('timestamp', 'desc')
+      );
 
-export const fetchPostsByPostTime = (options) =>
-  getDocumentsFromCollectionByConstraints(
-    'posts',
-    orderBy('timestamp', options)
-  );
+export const fetchPostsByPostTime = (options, communities) =>
+  communities && !isEmpty(communities)
+    ? getDocumentsFromCollectionByConstraints(
+        'posts',
+        where('communityId', 'in', communities),
+        orderBy('timestamp', options)
+      )
+    : getDocumentsFromCollectionByConstraints(
+        'posts',
+        orderBy('timestamp', options)
+      );
 
 export const fetchCommunityPostsByVoteNumber = (communityId) =>
   getDocumentsFromCollectionByConstraints(
