@@ -22,6 +22,7 @@ import NoComments from '../components/NoComments';
 import LoadingPost from '../components/LoadingPost';
 import LoadingComment from '../components/LoadingComment';
 import PostNotFound from '../components/PostNotFound';
+import { useUser } from '../hooks/useUser';
 
 const CommentsSection = ({ children }) => (
   <Stack
@@ -38,6 +39,7 @@ const CommentsSection = ({ children }) => (
 
 const Post = () => {
   const { postId } = useParams();
+  const { userId } = useUser();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const hasNoComments = isEmptyArray(comments);
@@ -126,6 +128,7 @@ const Post = () => {
           <PostContent
             title={post.title}
             author={post.author}
+            isAuthor={post.userId === userId}
             content={post.content}
             commentsNumber={post.commentsNumber}
             votes={post.votes}

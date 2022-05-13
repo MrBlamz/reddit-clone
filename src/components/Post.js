@@ -13,9 +13,13 @@ import React, { useMemo, useState } from 'react';
 import { BiShare } from 'react-icons/bi';
 import { BsBookmark } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
+import { MdOutlineEdit } from 'react-icons/md';
 import { getElapsedTimeAsString } from '../utils/date';
 import ActionButton from './buttons/ActionButton';
 import { PostVotingButtons } from './buttons/PostVotingButtons';
+import { Editor } from './Editor';
+import { updatePostContent } from '../utils/firebase/firestore';
+import { useNotification } from '../hooks/useNotification';
 
 const Container = ({ children, ...rest }) => (
   <Flex
@@ -86,9 +90,35 @@ const Post = ({
   commentsNumber,
   timestamp,
   postId,
+  isAuthor,
 }) => {
   const [isMobile] = useMediaQuery('(max-width: 48rem)');
-  const [votesNumber, setVotesNumber] = useState(votes);
+  const [state, setState] = useState({
+    votes,
+    content,
+    isEditing: false,
+  });
+  const { sendNotification } = useNotification();
+
+  const handleCancelEditingClick = () =>
+    setState((prevState) => ({ ...prevState, isEditing: false }));
+
+  const handleSaveEditingClick = async (newContent) => {
+    try {
+      await updatePostContent(newContent, postId);
+      setState((prevState) => ({
+        ...prevState,
+        content: newContent,
+        isEditing: false,
+      }));
+      sendNotification('success', 'Post updated successfully');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleVoteUpdate = (votes) =>
+    setState((prevState) => ({ ...prevState, votes }));
 
   const buttons = useMemo(() => {
     const ACTION_BUTTONS = [
@@ -112,29 +142,48 @@ const Post = ({
         icon: <BsBookmark />,
         text: 'Save',
       },
+      {
+        ariaLabel: 'Edit post',
+        icon: <MdOutlineEdit />,
+        text: 'Edit',
+        onClick: () =>
+          setState((prevState) => ({ ...prevState, isEditing: true })),
+        props: {
+          display: isAuthor ? 'inherit' : 'none',
+        },
+      },
     ];
 
     return ACTION_BUTTONS.map((btn) => (
       <ActionButton
+        p={2}
         key={btn.ariaLabel}
         ariaLabel={btn.ariaLabel}
         icon={btn.icon}
         text={btn.text}
-        p={2}
+        onClick={btn.onClick}
         {...btn.props}
       />
     ));
-  }, [commentsNumber]);
+  }, [commentsNumber, isAuthor]);
 
   const MobileLayout = () => (
     <Container>
       <Header title={title} author={author} timestamp={timestamp} />
-      <Content>{content}</Content>
+      {state.isEditing ? (
+        <Editor
+          content={state.content}
+          onCancel={handleCancelEditingClick}
+          onSave={handleSaveEditingClick}
+        />
+      ) : (
+        <Content>{state.content}</Content>
+      )}
       <ButtonsContainer>
         <VoteButtons
-          votes={votesNumber}
+          votes={state.votes}
           postId={postId}
-          onClick={setVotesNumber}
+          onClick={handleVoteUpdate}
         />
         {buttons}
       </ButtonsContainer>
@@ -144,12 +193,20 @@ const Post = ({
   const DesktopLayout = () => (
     <Container position='relative'>
       <VoteButtons
-        votes={votesNumber}
+        votes={state.votes}
         postId={postId}
-        onClick={setVotesNumber}
+        onClick={handleVoteUpdate}
       />
       <Header title={title} author={author} timestamp={timestamp} />
-      <Content>{content}</Content>
+      {state.isEditing ? (
+        <Editor
+          content={state.content}
+          onCancel={handleCancelEditingClick}
+          onSave={handleSaveEditingClick}
+        />
+      ) : (
+        <Content>{state.content}</Content>
+      )}
       <ButtonsContainer>{buttons}</ButtonsContainer>
     </Container>
   );
