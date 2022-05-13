@@ -9,13 +9,13 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useMemo } from 'react';
+import { BiShare } from 'react-icons/bi';
+import { BsBookmark } from 'react-icons/bs';
+import { MdOutlineEdit } from 'react-icons/md';
+import { VscComment } from 'react-icons/vsc';
 import { getElapsedTimeAsString } from '../utils/date';
-import {
-  CommentsButton,
-  SaveButton,
-  ShareButton,
-} from './buttons/ActionButton';
+import ActionButton from './buttons/ActionButton';
 import { PostVotingButtons } from './buttons/PostVotingButtons';
 
 const Container = ({ children, ...rest }) => (
@@ -52,32 +52,17 @@ const Content = ({ children }) => (
   </Text>
 );
 
-const Buttons = ({ commentsNumber, children }) => (
-  <Flex w='full'>
-    <Wrap
-      spacing={2}
-      w={{ base: 'full', md: 'fit-content' }}
-      justify='space-around'
-    >
-      {React.Children.map(children, (child) => (
-        <WrapItem>{child}</WrapItem>
-      ))}
-      <WrapItem>
-        <CommentsButton
-          commentsNumber={commentsNumber}
-          p={{ base: 0, md: 2 }}
-          pointerEvents='none'
-        />
-      </WrapItem>
-      <WrapItem>
-        <ShareButton p={{ base: 0, md: 2 }} />
-      </WrapItem>
-      <WrapItem>
-        <SaveButton p={{ base: 0, md: 2 }} />
-      </WrapItem>
-    </Wrap>
-  </Flex>
-);
+const ButtonsContainer = ({ children }) => {
+  return (
+    <Flex w='full'>
+      <Wrap spacing={0} w={{ base: 'full', md: 'fit-content' }}>
+        {React.Children.map(children, (child) => (
+          <WrapItem>{child}</WrapItem>
+        ))}
+      </Wrap>
+    </Flex>
+  );
+};
 
 const VoteButtons = ({ votes, postId }) => (
   <PostVotingButtons
@@ -104,22 +89,63 @@ const Post = ({
 }) => {
   const [isMobile] = useMediaQuery('(max-width: 48rem)');
 
-  return isMobile ? (
+  const buttons = useMemo(() => {
+    const ACTION_BUTTONS = [
+      {
+        ariaLabel: 'Open Comments',
+        icon: <VscComment />,
+        text: `${commentsNumber} ${
+          commentsNumber === 1 ? 'Comment' : 'Comments'
+        }`,
+        props: {
+          pointerEvents: 'none',
+        },
+      },
+      {
+        ariaLabel: 'Share post',
+        icon: <BiShare style={{ transform: 'rotateY(180deg)' }} />,
+        text: 'Share',
+      },
+      {
+        ariaLabel: 'Save post',
+        icon: <BsBookmark />,
+        text: 'Save',
+      },
+    ];
+
+    return ACTION_BUTTONS.map((btn) => (
+      <ActionButton
+        key={btn.ariaLabel}
+        ariaLabel={btn.ariaLabel}
+        icon={btn.icon}
+        text={btn.text}
+        p={2}
+        {...btn.props}
+      />
+    ));
+  }, [commentsNumber]);
+
+  const MobileLayout = () => (
     <Container>
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
-      <Buttons commentsNumber={commentsNumber}>
+      <ButtonsContainer>
         <VoteButtons votes={votes} postId={postId} />
-      </Buttons>
+        {buttons}
+      </ButtonsContainer>
     </Container>
-  ) : (
+  );
+
+  const DesktopLayout = () => (
     <Container position='relative'>
       <VoteButtons votes={votes} postId={postId} />
       <Header title={title} author={author} timestamp={timestamp} />
       <Content>{content}</Content>
-      <Buttons commentsNumber={commentsNumber} />
+      <ButtonsContainer>{buttons}</ButtonsContainer>
     </Container>
   );
+
+  return isMobile ? <MobileLayout /> : <DesktopLayout />;
 };
 
 export default Post;
