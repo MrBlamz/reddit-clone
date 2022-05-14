@@ -400,3 +400,24 @@ export const updateCommentContent = async (content, commentId) => {
     content,
   });
 };
+
+export const deleteComment = async (commentId) => {
+  const commentRef = doc(db, 'comments', commentId);
+
+  try {
+    return await runTransaction(db, async (transaction) => {
+      const commentDoc = await transaction.get(commentRef);
+      const postRef = doc(db, 'posts', commentDoc.data().postId);
+      const postDoc = await transaction.get(postRef);
+
+      const updatedPostCommentsNumber = postDoc.data().commentsNumber - 1;
+
+      transaction.delete(commentRef);
+      transaction.update(postRef, {
+        commentsNumber: updatedPostCommentsNumber,
+      });
+    });
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
