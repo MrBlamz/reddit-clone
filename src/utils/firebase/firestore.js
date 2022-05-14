@@ -392,3 +392,11 @@ export const updatePostContent = async (content, postId) => {
     content,
   });
 };
+
+export const updateCommentContent = async (content, commentId) => {
+  const commentRef = doc(db, 'comments', commentId);
+
+  return updateDoc(commentRef, {
+    content,
+  });
+};
