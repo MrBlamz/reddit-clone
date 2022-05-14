@@ -161,6 +161,7 @@ const Post = () => {
               <Comment
                 commentId={comment.id}
                 isPostAuthor={comment.userId === post.userId}
+                isAuthor={comment.userId === userId}
                 author={comment.author}
                 content={comment.content}
                 votes={comment.votes}
