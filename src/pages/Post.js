@@ -40,27 +40,29 @@ const CommentsSection = ({ children }) => (
 const Post = () => {
   const { postId } = useParams();
   const { userId } = useUser();
-  const [post, setPost] = useState(null);
-  const [comments, setComments] = useState([]);
-  const hasNoComments = isEmptyArray(comments);
-  const [isLoadingPost, setIsLoadingPost] = useState(true);
-  const [isLoadingComments, setIsLoadingComments] = useState(true);
   const dropdownMenuOptions = ['Best', 'Recent', 'Old'];
-  const [sortCommentsMode, setSortCommentsMode] = useState(
-    dropdownMenuOptions[0]
-  );
+  const [state, setState] = useState({
+    post: null,
+    comments: [],
+    isLoadingPost: true,
+    isLoadingComments: true,
+    sortCommentsMode: dropdownMenuOptions[0],
+  });
+  const { post, comments, isLoadingPost, isLoadingComments, sortCommentsMode } =
+    state;
+  const hasNoComments = isEmptyArray(state.comments);
 
   const fetchPostData = useCallback(async () => {
-    setIsLoadingPost(true);
+    setState((prevState) => ({ ...prevState, isLoadingPost: true }));
 
     try {
       const postData = await fetchPost(postId);
-      setPost(postData);
+      setState((prevState) => ({ ...prevState, post: postData }));
     } catch (error) {
       console.log(error);
     }
 
-    setIsLoadingPost(false);
+    setState((prevState) => ({ ...prevState, isLoadingPost: false }));
   }, [postId]);
 
   const fetchCommentsFunctions = useMemo(
@@ -73,38 +75,43 @@ const Post = () => {
   );
 
   const fetchCommentsData = useCallback(async () => {
-    setIsLoadingComments(true);
+    setState((prevState) => ({ ...prevState, isLoadingComments: true }));
 
     try {
       const fetchComments = fetchCommentsFunctions[sortCommentsMode];
       const commentsData = await fetchComments();
-      setComments(commentsData);
+      setState((prevState) => ({ ...prevState, comments: commentsData }));
     } catch (error) {
       console.log(error);
     }
 
-    setIsLoadingComments(false);
+    setState((prevState) => ({ ...prevState, isLoadingComments: false }));
   }, [fetchCommentsFunctions, sortCommentsMode]);
 
   const changeSortingMode = (event) => {
     const selectedSortingMode = event.target.textContent;
-    setSortCommentsMode(selectedSortingMode);
+    setState((prevState) => ({
+      ...prevState,
+      sortCommentsMode: selectedSortingMode,
+    }));
   };
 
   // Set sort comments mode to recent if not already when a new comment is submitted
   // If mode is recent already run fetch function instead
   const handleCommentSubmit = async () => {
-    setPost((prevState) => ({
+    setState((prevState) => ({
       ...prevState,
-      commentsNumber: prevState.commentsNumber + 1,
+      post: {
+        ...prevState.post,
+        commentsNumber: prevState.post.commentsNumber + 1,
+      },
     }));
 
     if (sortCommentsMode === 'Recent') {
       fetchCommentsData();
       return;
     }
-
-    setSortCommentsMode('Recent');
+    setState((prevState) => ({ ...prevState, sortCommentsMode: 'Recent' }));
   };
 
   // Fetch post when postId changes
@@ -121,10 +128,10 @@ const Post = () => {
 
   return (
     <Box w='full' py={3} px={{ base: 3, xl: 80 }}>
-      {isLoadingPost ? (
+      {state.isLoadingPost ? (
         <LoadingPost />
       ) : (
-        <Fade in={!isLoadingPost}>
+        <Fade in={!state.isLoadingPost}>
           <PostContent
             title={post.title}
             author={post.author}
