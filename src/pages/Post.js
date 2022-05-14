@@ -52,6 +52,18 @@ const Post = () => {
     state;
   const hasNoComments = isEmptyArray(state.comments);
 
+  const handleCommentDelete = (commentId) =>
+    setState((prevState) => ({
+      ...prevState,
+      post: {
+        ...prevState.post,
+        commentsNumber: prevState.post.commentsNumber - 1,
+      },
+      comments: prevState.comments.filter(
+        (comment) => comment.id !== commentId
+      ),
+    }));
+
   const fetchPostData = useCallback(async () => {
     setState((prevState) => ({ ...prevState, isLoadingPost: true }));
 
@@ -164,17 +176,17 @@ const Post = () => {
         {!isLoadingComments &&
           comments.length &&
           comments.map((comment) => (
-            <Fade key={comment.id} in={!isLoadingComments}>
-              <Comment
-                commentId={comment.id}
-                isPostAuthor={comment.userId === post.userId}
-                isAuthor={comment.userId === userId}
-                author={comment.author}
-                content={comment.content}
-                votes={comment.votes}
-                timestamp={comment.timestamp}
-              />
-            </Fade>
+            <Comment
+              key={comment.id}
+              commentId={comment.id}
+              isPostAuthor={comment.userId === post.userId}
+              isAuthor={comment.userId === userId}
+              author={comment.author}
+              content={comment.content}
+              votes={comment.votes}
+              timestamp={comment.timestamp}
+              onDelete={handleCommentDelete}
+            />
           ))}
 
         {!isLoadingComments && hasNoComments && <NoComments />}
