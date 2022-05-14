@@ -1,16 +1,20 @@
 import { Button, Flex } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import AutoResizeTextArea from './AutoResizeTextArea';
 
 export const Editor = ({ content, onCancel, onSave }) => {
   const [value, setValue] = useState(content);
   const [isSaving, setIsSaving] = useState(false);
+  const ref = useRef();
 
   const handleInputChange = (event) => setValue(event.target.value);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    onSave(value);
+
+    await onSave(value);
+
+    if (ref.current) setIsSaving(false);
   };
 
   return (
@@ -35,6 +39,7 @@ export const Editor = ({ content, onCancel, onSave }) => {
           onClick={handleSave}
           disabled={content === value || !value}
           isLoading={isSaving}
+          ref={ref}
         >
           Save
         </Button>
