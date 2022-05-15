@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -420,4 +421,25 @@ export const deleteComment = async (commentId) => {
   } catch (error) {
     return Promise.reject(error);
   }
+};
+
+const deleteCommentsOfDeletedPost = async (postId) => {
+  const q = query(collection(db, 'comments'), where('postId', '==', postId));
+  const querySnapshot = await getDocs(q);
+
+  querySnapshot.forEach(async (doc) => await deleteDoc(doc.ref));
+};
+
+export const deletePost = async (postId) => {
+  let deleted = false;
+  const postRef = doc(db, 'posts', postId);
+
+  try {
+    await deleteDoc(postRef);
+    deleted = true;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+
+  if (deleted) deleteCommentsOfDeletedPost(postId);
 };
