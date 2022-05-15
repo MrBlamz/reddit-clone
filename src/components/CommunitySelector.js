@@ -161,7 +161,7 @@ export const CommunitySelector = ({ onSelect, ...props }) => {
   useEffect(() => {
     const fetchUserCommunitiesData = async () => {
       const communitiesData = await Promise.all(
-        followingCommunities.map(
+        Object.keys(followingCommunities).map(
           async (communityId) => await fetchCommunityData(communityId)
         )
       );
