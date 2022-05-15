@@ -60,7 +60,6 @@ const Comment = ({
   const handleDelete = async () => {
     try {
       await deleteCommentOnServer(commentId);
-      onClose();
       if (onDelete) onDelete(commentId);
       sendNotification('success', 'Comment deleted successfully');
     } catch (error) {}
