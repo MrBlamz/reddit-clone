@@ -16,39 +16,45 @@ import { useUser } from '../hooks/useUser';
 const Home = () => {
   const navigate = useNavigate();
   const { isLoggedIn, followingCommunities } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
-  const [posts, setPosts] = useState([]);
-  const [selectedSortingMode, setSelectedSortingMode] = useState(
-    SORT_POSTS_OPTIONS[0]
-  );
+  const [state, setState] = useState({
+    isLoading: false,
+    posts: [],
+    selectedSortingMode: SORT_POSTS_OPTIONS[0],
+  });
   const [isMobile] = useMediaQuery('(max-width: 62rem)');
+  const { isLoading, posts, selectedSortingMode } = state;
 
-  const fetchPostsFunctions = useMemo(
-    () => ({
+  const fetchPostsFunctions = useMemo(() => {
+    const communitiesIds = Object.keys(followingCommunities);
+
+    return {
       [SORT_POSTS_OPTIONS[0]]: () =>
         isLoggedIn
-          ? fetchPostsByVoteNumber(followingCommunities)
+          ? fetchPostsByVoteNumber(communitiesIds)
           : fetchPostsByVoteNumber(),
       [SORT_POSTS_OPTIONS[1]]: () =>
         isLoggedIn
-          ? fetchPostsByPostTime('asc', followingCommunities)
+          ? fetchPostsByPostTime('asc', communitiesIds)
           : fetchPostsByPostTime('asc'),
       [SORT_POSTS_OPTIONS[2]]: () =>
         isLoggedIn
-          ? fetchPostsByPostTime('desc', followingCommunities)
+          ? fetchPostsByPostTime('desc', communitiesIds)
           : fetchPostsByPostTime('desc'),
-    }),
-    [isLoggedIn, followingCommunities]
-  );
+    };
+  }, [isLoggedIn, followingCommunities]);
 
   const handleClick = (communityName, postId) => (event) => {
     event.stopPropagation();
     navigate(`/r/${communityName}/${postId}`);
   };
 
-  const loadingCards = [...Array(10)].map((v, i) => (
-    <LoadingPostCard w='full' key={i} />
-  ));
+  const handlePostSorterClick = (mode) =>
+    setState((prevState) => ({ ...prevState, selectedSortingMode: mode }));
+
+  const loadingCards = useMemo(
+    () => [...Array(10)].map((v, i) => <LoadingPostCard w='full' key={i} />),
+    []
+  );
 
   const postCards = posts.map((post, i) => (
     <PostCard
@@ -72,7 +78,7 @@ const Home = () => {
         <Flex direction='column' gap={2}>
           <PostsSorter
             selectedSortingMode={selectedSortingMode}
-            setSelectedSortingMode={setSelectedSortingMode}
+            setSelectedSortingMode={handlePostSorterClick}
           />
 
           {isLoading && loadingCards}
@@ -92,7 +98,7 @@ const Home = () => {
       <HomeBanner />
       <PostsSorter
         selectedSortingMode={selectedSortingMode}
-        setSelectedSortingMode={setSelectedSortingMode}
+        setSelectedSortingMode={handlePostSorterClick}
       />
 
       {isLoading && loadingCards}
@@ -103,17 +109,17 @@ const Home = () => {
 
   useEffect(() => {
     const fetchPostsBySelectedMode = async () => {
-      setIsLoading(true);
+      setState((prevState) => ({ ...prevState, isLoading: true }));
 
       try {
         const fetchPosts = fetchPostsFunctions[selectedSortingMode];
         const data = await fetchPosts();
-        setPosts(data);
+        setState((prevState) => ({ ...prevState, posts: data }));
       } catch (error) {
         console.log(error);
       }
 
-      setIsLoading(false);
+      setState((prevState) => ({ ...prevState, isLoading: false }));
     };
 
     fetchPostsBySelectedMode();
