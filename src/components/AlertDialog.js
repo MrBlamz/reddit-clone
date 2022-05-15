@@ -13,7 +13,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 export const AlertDialog = ({
   isOpen,
@@ -28,16 +28,17 @@ export const AlertDialog = ({
   const [state, setState] = useState({
     isSubmitting: false,
   });
+  const ref = useRef();
 
   const handleActionButtonClick = async () => {
     setState((prevState) => ({ ...prevState, isSubmitting: true }));
 
     try {
       await onActionButtonClick();
-      onClose();
     } catch (error) {
       console.log(error);
-      setState((prevState) => ({ ...prevState, isSubmitting: false }));
+      if (ref.current)
+        setState((prevState) => ({ ...prevState, isSubmitting: false }));
     }
   };
 
@@ -49,7 +50,10 @@ export const AlertDialog = ({
       isCentered
     >
       <AlertDialogOverlay>
-        <AlertDialogContent bg={useColorModeValue('brand.light', 'brand.dark')}>
+        <AlertDialogContent
+          bg={useColorModeValue('brand.light', 'brand.dark')}
+          ref={ref}
+        >
           <AlertDialogCloseButton />
           <AlertDialogHeader p={0}>
             <Box py={4} px={6}>
