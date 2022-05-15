@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.js": "/react-gh-pages/static/js/main.43d31116.js",
-    "static/media/modalArt.png": "/react-gh-pages/static/media/modalArt.a31e4b3d05f6d07c51a7.png",
-    "static/media/homeBanner.png": "/react-gh-pages/static/media/homeBanner.574c10f30d77570b9c17.png",
-    "static/media/snoo.png": "/react-gh-pages/static/media/snoo.f11945c89abe59a391a7.png",
-    "static/media/text_dark_theme.svg": "/react-gh-pages/static/media/text_dark_theme.1157e02c76910b0873fe6612a70a2b78.svg",
-    "static/media/text_white_theme.svg": "/react-gh-pages/static/media/text_white_theme.a7d03d6ced505e14dae211c3119daa43.svg",
-    "static/media/logo.svg": "/react-gh-pages/static/media/logo.d2c4e329cdcdafe8aa227e17eb9a27c4.svg",
-    "index.html": "/react-gh-pages/index.html",
-    "main.43d31116.js.map": "/react-gh-pages/static/js/main.43d31116.js.map"
+    "main.js": "/reddit-clone/static/js/main.a5940395.js",
+    "static/media/modalArt.png": "/reddit-clone/static/media/modalArt.a31e4b3d05f6d07c51a7.png",
+    "static/media/homeBanner.png": "/reddit-clone/static/media/homeBanner.574c10f30d77570b9c17.png",
+    "static/media/snoo.png": "/reddit-clone/static/media/snoo.f11945c89abe59a391a7.png",
+    "static/media/text_dark_theme.svg": "/reddit-clone/static/media/text_dark_theme.1157e02c76910b0873fe6612a70a2b78.svg",
+    "static/media/text_white_theme.svg": "/reddit-clone/static/media/text_white_theme.a7d03d6ced505e14dae211c3119daa43.svg",
+    "static/media/logo.svg": "/reddit-clone/static/media/logo.d2c4e329cdcdafe8aa227e17eb9a27c4.svg",
+    "index.html": "/reddit-clone/index.html",
+    "main.a5940395.js.map": "/reddit-clone/static/js/main.a5940395.js.map"
   },
   "entrypoints": [
-    "static/js/main.43d31116.js"
+    "static/js/main.a5940395.js"
   ]
 }
