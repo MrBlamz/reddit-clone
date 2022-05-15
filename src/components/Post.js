@@ -4,22 +4,28 @@ import {
   HStack,
   Text,
   useColorModeValue,
+  useDisclosure,
   useMediaQuery,
   VStack,
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { BiShare } from 'react-icons/bi';
 import { BsBookmark } from 'react-icons/bs';
 import { VscComment } from 'react-icons/vsc';
-import { MdOutlineEdit } from 'react-icons/md';
+import { MdDeleteOutline, MdOutlineEdit } from 'react-icons/md';
 import { getElapsedTimeAsString } from '../utils/date';
 import ActionButton from './buttons/ActionButton';
 import { PostVotingButtons } from './buttons/PostVotingButtons';
 import { Editor } from './Editor';
-import { updatePostContent } from '../utils/firebase/firestore';
+import {
+  deletePost as deletePostOnServer,
+  updatePostContent,
+} from '../utils/firebase/firestore';
 import { useNotification } from '../hooks/useNotification';
+import { AlertDialog } from './AlertDialog';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Container = ({ children, ...rest }) => (
   <Flex
@@ -98,7 +104,11 @@ const Post = ({
     content,
     isEditing: false,
   });
+  const { communityName } = useParams();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
   const { sendNotification } = useNotification();
+  const closeModalRef = useRef();
 
   const handleCancelEditingClick = () =>
     setState((prevState) => ({ ...prevState, isEditing: false }));
@@ -119,6 +129,16 @@ const Post = ({
 
   const handleVoteUpdate = (votes) =>
     setState((prevState) => ({ ...prevState, votes }));
+
+  const handleDelete = async () => {
+    try {
+      await deletePostOnServer(postId);
+      sendNotification('success', 'Post deleted successfully');
+      navigate(`/r/${communityName}`);
+    } catch (error) {
+      sendNotification('error', error);
+    }
+  };
 
   const buttons = useMemo(() => {
     const ACTION_BUTTONS = [
@@ -152,6 +172,15 @@ const Post = ({
           display: isAuthor ? 'inherit' : 'none',
         },
       },
+      {
+        ariaLabel: 'Delete post',
+        icon: <MdDeleteOutline />,
+        text: 'Delete',
+        onClick: onOpen,
+        props: {
+          display: isAuthor ? 'inherit' : 'none',
+        },
+      },
     ];
 
     return ACTION_BUTTONS.map((btn) => (
@@ -165,7 +194,7 @@ const Post = ({
         {...btn.props}
       />
     ));
-  }, [commentsNumber, isAuthor]);
+  }, [commentsNumber, isAuthor, onOpen]);
 
   const MobileLayout = () => (
     <Container>
@@ -211,7 +240,21 @@ const Post = ({
     </Container>
   );
 
-  return isMobile ? <MobileLayout /> : <DesktopLayout />;
+  return (
+    <>
+      {isMobile ? <MobileLayout /> : <DesktopLayout />}
+      <AlertDialog
+        isOpen={isOpen}
+        onClose={onClose}
+        closeRef={closeModalRef}
+        title='Delete Post'
+        content="Are you sure you want to delete your post? You can't undo this."
+        cancelButtonText='Cancel'
+        ActionButtonText='Delete Post'
+        onActionButtonClick={handleDelete}
+      />
+    </>
+  );
 };
 
 export default Post;
