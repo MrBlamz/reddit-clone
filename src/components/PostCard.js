@@ -136,6 +136,58 @@ const PostCard = ({
       />
     ));
 
+  const MobileLayout = () => (
+    <Flex>
+      <VStack width='full' alignItems='flex-start'>
+        <Header
+          title={title}
+          author={author}
+          communityName={communityName}
+          elapsedTime={getElapsedTimeAsString(timestamp)}
+        />
+
+        <Flex>
+          <VoteButtons />
+          <Flex ml={2} flexWrap='wrap'>
+            <Buttons />
+          </Flex>
+        </Flex>
+      </VStack>
+      <Box display={{ base: 'none', md: 'block' }} position='relative' pb={2}>
+        <DocumentIcon />
+        <ExpandButton position='absolute' bottom='2' right='0' />
+      </Box>
+    </Flex>
+  );
+
+  const DesktopLayout = () => (
+    <Flex>
+      <Flex p={2}>
+        <VoteButtons />
+        <DocumentIcon />
+      </Flex>
+      <Box>
+        <Flex p={2} pb={0} pl={0} w='full' h='full'>
+          <Flex direction='column' px={2}>
+            <Header
+              title={title}
+              author={author}
+              communityName={communityName}
+              elapsedTime={getElapsedTimeAsString(timestamp)}
+            />
+            <HStack mt='auto'>
+              <ExpandButton />
+              <Divider orientation='vertical' h='50%' />
+              <Flex>
+                <Buttons />
+              </Flex>
+            </HStack>
+          </Flex>
+        </Flex>
+      </Box>
+    </Flex>
+  );
+
   return (
     <Flex
       width='full'
@@ -156,59 +208,7 @@ const PostCard = ({
       }}
       {...rest}
     >
-      {isMobile ? (
-        <>
-          <VStack width='full' alignItems='flex-start'>
-            <Header
-              title={title}
-              author={author}
-              communityName={communityName}
-              elapsedTime={getElapsedTimeAsString(timestamp)}
-            />
-
-            <Flex>
-              <VoteButtons />
-              <Flex ml={2} flexWrap='wrap'>
-                <Buttons />
-              </Flex>
-            </Flex>
-          </VStack>
-          <Box
-            display={{ base: 'none', md: 'block' }}
-            position='relative'
-            pb={2}
-          >
-            <DocumentIcon />
-            <ExpandButton position='absolute' bottom='2' right='0' />
-          </Box>
-        </>
-      ) : (
-        <>
-          <Flex p={2}>
-            <VoteButtons />
-            <DocumentIcon />
-          </Flex>
-          <Box>
-            <Flex p={2} pb={0} pl={0} w='full' h='full'>
-              <Flex direction='column' px={2}>
-                <Header
-                  title={title}
-                  author={author}
-                  communityName={communityName}
-                  elapsedTime={getElapsedTimeAsString(timestamp)}
-                />
-                <HStack mt='auto'>
-                  <ExpandButton />
-                  <Divider orientation='vertical' h='50%' />
-                  <Flex>
-                    <Buttons />
-                  </Flex>
-                </HStack>
-              </Flex>
-            </Flex>
-          </Box>
-        </>
-      )}
+      {isMobile ? <MobileLayout /> : <DesktopLayout />}
     </Flex>
   );
 };
