@@ -29,8 +29,8 @@ const CommentsSection = ({ children }) => (
     borderRadius={5}
     bg={useColorModeValue('brand.light', 'brand.dark')}
     spacing={4}
-    px={{ base: 2, md: 12 }}
-    py={{ base: 2, md: 6 }}
+    px={{ base: 2, lg: 12 }}
+    py={{ base: 2, lg: 6 }}
     mt={4}
   >
     {children}

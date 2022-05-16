@@ -39,8 +39,8 @@ export const HomeBanner = (props) => {
       borderRadius={5}
       {...props}
     >
-      <Box>
-        <Image src={banner} alt='Home banner' />
+      <Box w='full'>
+        <Image src={banner} alt='Home banner' w='full' />
 
         <VStack alignItems='flex-start' p={3} spacing={3}>
           <Flex gap={3} alignItems='center' mt={-6}>

@@ -34,7 +34,6 @@ const ExpandButton = ({ ...rest }) => (
 
 const DocumentIcon = ({ ...rest }) => (
   <Center
-    ml={2}
     bg={useColorModeValue('brand.iconBgLight', 'brand.iconBgDark')}
     w='130px'
     h='full'
@@ -116,12 +115,13 @@ const PostCard = ({
     'brand.borderDark'
   );
 
-  const VoteButtons = () => (
+  const VoteButtons = (props) => (
     <PostVotingButtons
       postId={id}
       votesNumber={votes}
       direction={isMobile ? 'row' : 'column'}
       fontSize={isMobile && '14px'}
+      {...props}
     />
   );
 
@@ -138,6 +138,15 @@ const PostCard = ({
 
   const MobileLayout = () => (
     <Flex>
+      <Box
+        display={{ base: 'none', md: 'block' }}
+        position='relative'
+        pb={2}
+        mr={2}
+      >
+        <DocumentIcon />
+        <ExpandButton position='absolute' bottom={2} right={0} />
+      </Box>
       <VStack width='full' alignItems='flex-start'>
         <Header
           title={title}
@@ -147,16 +156,15 @@ const PostCard = ({
         />
 
         <Flex>
-          <VoteButtons />
+          <VoteButtons
+            w={{ base: '80px', md: '90px' }}
+            justifyContent='space-around'
+          />
           <Flex ml={2} flexWrap='wrap'>
             <Buttons />
           </Flex>
         </Flex>
       </VStack>
-      <Box display={{ base: 'none', md: 'block' }} position='relative' pb={2}>
-        <DocumentIcon />
-        <ExpandButton position='absolute' bottom='2' right='0' />
-      </Box>
     </Flex>
   );
 
@@ -164,7 +172,7 @@ const PostCard = ({
     <Flex>
       <Flex p={2}>
         <VoteButtons />
-        <DocumentIcon />
+        <DocumentIcon ml={2} />
       </Flex>
       <Box>
         <Flex p={2} pb={0} pl={0} w='full' h='full'>

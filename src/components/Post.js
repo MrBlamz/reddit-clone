@@ -30,7 +30,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const Container = ({ children, ...rest }) => (
   <Flex
     borderRadius={5}
-    px={{ base: 3, md: 12 }}
+    px={{ base: 3, lg: 12 }}
     py={{ base: 4, md: 2 }}
     bg={useColorModeValue('brand.light', 'brand.dark')}
     {...rest}
@@ -78,10 +78,11 @@ const VoteButtons = ({ votes, postId, onClick }) => (
     fontSize='14px'
     votesNumber={votes}
     postId={postId}
-    h='full'
-    justifyContent='flex-start'
-    direction={{ base: 'row', md: 'column' }}
-    position={{ base: 'static', md: 'absolute' }}
+    h={{ base: 'full', lg: 'fit-content' }}
+    w={{ base: '80px', md: '90px', lg: 'fit-content' }}
+    justifyContent='space-around'
+    direction={{ base: 'row', lg: 'column' }}
+    position={{ base: 'static', lg: 'absolute' }}
     top={2}
     left={2}
     onClick={onClick}
@@ -98,7 +99,7 @@ const Post = ({
   postId,
   isAuthor,
 }) => {
-  const [isMobile] = useMediaQuery('(max-width: 48rem)');
+  const [isMobile] = useMediaQuery('(max-width: 62rem)');
   const [state, setState] = useState({
     votes,
     content,
