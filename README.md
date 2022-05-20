@@ -2,7 +2,7 @@
 
 In this project i tried to replicate the reddit website and some of it's features.
 
-## Functionalities
+## Features
 
 - Create communities
 - Create posts
